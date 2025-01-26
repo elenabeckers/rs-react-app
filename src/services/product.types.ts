@@ -2,6 +2,7 @@ export interface Product {
   id: number;
   title: string;
   description: string;
+  thumbnail: string;
 }
 
 export interface SearchProductsResponse {

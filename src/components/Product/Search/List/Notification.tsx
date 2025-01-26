@@ -10,12 +10,10 @@ class ProductSearchGridNotification extends React.Component<ProductSearchGridNot
     const { title, description } = this.props;
 
     return (
-      <tr className="text-center">
-        <td colSpan={2}>
-          <div>{title}</div>
-          <div>{description}</div>
-        </td>
-      </tr>
+      <div className="m-auto">
+        <p>{title}</p>
+        <p>{description}</p>
+      </div>
     );
   }
 }

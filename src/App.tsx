@@ -1,5 +1,5 @@
 import React from 'react';
-import HomePage from './pages/HomePage';
+import HomePage from './pages/Home';
 import ErrorBoundary from './components/ErrorBoundary';
 
 class App extends React.Component {

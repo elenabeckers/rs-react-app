@@ -4,7 +4,7 @@ import { searchProducts } from '../../../services/product';
 import { Product } from '../../../services/product.types';
 
 import ProductSearchInput from '../../../components/Product/Search/Input';
-import ProductSearchGrid from './Grid';
+import ProductSearchList from './List';
 
 interface ProductSearchSectionState {
   products: Product[];
@@ -41,19 +41,18 @@ class ProductSearchSection extends React.Component<
   };
 
   render() {
+    const { isLoading, products, errorMessage } = this.state;
+
     return (
       <section className="w-full">
         <header className="w-2/4 mx-auto mb-12">
-          <ProductSearchInput
-            onSearch={this.onSearch}
-            isLoading={this.state.isLoading}
-          />
+          <ProductSearchInput onSearch={this.onSearch} isLoading={isLoading} />
         </header>
         <main className="max-w-7xl h-[500px] mx-auto border overflow-auto">
-          <ProductSearchGrid
-            products={this.state.products}
-            isLoading={this.state.isLoading}
-            errorMessage={this.state.errorMessage}
+          <ProductSearchList
+            products={products}
+            isLoading={isLoading}
+            errorMessage={errorMessage}
           />
         </main>
       </section>
