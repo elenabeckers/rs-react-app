@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface ProductSearchGridNotificationProps {
+interface NotificationMessageProps {
   title?: string;
   description?: string;
 }
 
-class ProductSearchGridNotification extends React.Component<ProductSearchGridNotificationProps> {
+class NotificationMessage extends React.Component<NotificationMessageProps> {
   render() {
     const { title, description } = this.props;
 
@@ -18,4 +18,4 @@ class ProductSearchGridNotification extends React.Component<ProductSearchGridNot
   }
 }
 
-export default ProductSearchGridNotification;
+export default NotificationMessage;

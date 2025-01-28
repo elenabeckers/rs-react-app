@@ -1,4 +1,5 @@
 import React from 'react';
+import AsyncButton from '../../common/AsyncButton';
 
 interface ProductSearchInputProps {
   onSearch: (searchTerm: string) => Promise<void>;
@@ -52,18 +53,15 @@ class ProductSearchInput extends React.Component<
           className="w-full p-4 ps-8"
           placeholder="Search for products like Phones, Laptops..."
         />
-        <button
+        <AsyncButton
           type="submit"
           onClick={this.onSearch}
           disabled={isLoading}
+          isLoading={isLoading}
           className="absolute end-2.5 bottom-2.5"
         >
-          {isLoading ? (
-            <div className="animate-spin border-solid border-t-2 border-white rounded-full w-5 h-5" />
-          ) : (
-            'Search'
-          )}
-        </button>
+          Search
+        </AsyncButton>
       </div>
     );
   }

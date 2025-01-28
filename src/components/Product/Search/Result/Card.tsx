@@ -1,11 +1,11 @@
 import React from 'react';
 import { Product } from '../../../../services/product.types';
 
-interface ProductSearchListCardProps {
+interface ProductSearchResultCardProps {
   product: Product;
 }
 
-class ProductSearchListCard extends React.Component<ProductSearchListCardProps> {
+class ProductSearchResultCard extends React.Component<ProductSearchResultCardProps> {
   render() {
     const { product } = this.props;
 
@@ -26,4 +26,4 @@ class ProductSearchListCard extends React.Component<ProductSearchListCardProps> 
   }
 }
 
-export default ProductSearchListCard;
+export default ProductSearchResultCard;

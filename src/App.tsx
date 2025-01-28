@@ -1,6 +1,6 @@
 import React from 'react';
 import HomePage from './pages/Home';
-import ErrorBoundary from './components/ErrorBoundary';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 class App extends React.Component {
   render() {
