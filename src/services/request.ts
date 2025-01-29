@@ -1,3 +1,8 @@
+import {
+  GENERIC_ERROR_MESSAGE,
+  UNKNOWN_ERROR_MESSAGE,
+} from '../constants/errorMessages';
+
 export async function request<T>(
   url: string,
   options?: RequestInit
@@ -7,7 +12,7 @@ export async function request<T>(
 
     if (!response.ok) {
       const errorMessage = `Error ${response.status}: ${
-        response.statusText || 'Something went wrong.'
+        response.statusText || GENERIC_ERROR_MESSAGE
       }`;
       throw new Error(errorMessage);
     }
@@ -18,6 +23,6 @@ export async function request<T>(
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error('An unknown error occurred.');
+    throw new Error(UNKNOWN_ERROR_MESSAGE);
   }
 }

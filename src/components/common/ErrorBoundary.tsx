@@ -26,7 +26,7 @@ class ErrorBoundary extends React.Component<
     const { error } = this.state;
 
     if (error) {
-      return <ErrorPage errorTitle={error.message} returnUrl={'/'} />;
+      return <ErrorPage errorTitle={error.message} />;
     }
 
     return this.props.children;

@@ -4,6 +4,10 @@ import { Product } from '../../../../services/product.types';
 import ProductSearchResultSkeleton from './Skeleton';
 import ProductSearchResultCard from './Card';
 import NotificationMessage from '../../../common/NotificationMessage';
+import {
+  FETCH_ERROR_MESSAGE,
+  NO_RESULTS_FOUND_MESSAGE,
+} from '../../../../constants/errorMessages';
 
 interface ProductSearchResultProps {
   products: Product[];
@@ -22,16 +26,10 @@ class ProductSearchResult extends React.Component<ProductSearchResultProps> {
         ) : errorMessage ? (
           <NotificationMessage
             title={errorMessage}
-            description={
-              'Oops! It seems there was an unexpected error. Please try again.'
-            }
+            description={FETCH_ERROR_MESSAGE}
           />
         ) : products.length === 0 ? (
-          <NotificationMessage
-            description={
-              'Oops! Nothing matched your search. Give it another shot.'
-            }
-          />
+          <NotificationMessage description={NO_RESULTS_FOUND_MESSAGE} />
         ) : (
           products.map((product) => (
             <ProductSearchResultCard key={product.id} product={product} />

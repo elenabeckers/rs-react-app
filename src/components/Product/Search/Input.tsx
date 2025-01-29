@@ -10,6 +10,8 @@ interface ProductSearchInputState {
   searchTerm: string;
 }
 
+const INPUT_PLACEHOLDER_TEXT = 'Search for products like Phones, Laptops...';
+
 class ProductSearchInput extends React.Component<
   ProductSearchInputProps,
   ProductSearchInputState
@@ -51,7 +53,7 @@ class ProductSearchInput extends React.Component<
           value={searchTerm}
           disabled={isLoading}
           className="w-full p-4 ps-8"
-          placeholder="Search for products like Phones, Laptops..."
+          placeholder={INPUT_PLACEHOLDER_TEXT}
         />
         <AsyncButton
           type="submit"

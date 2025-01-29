@@ -3,6 +3,10 @@ import { searchProducts } from '../services/product';
 import { Product } from '../services/product.types';
 import ProductSearchInput from '../components/Product/Search/Input';
 import ProductSearchResult from '../components/Product/Search/Result';
+import {
+  UNKNOWN_ERROR_MESSAGE,
+  USER_GENERATED_ERROR_MESSAGE,
+} from '../constants/errorMessages';
 
 interface HomePageState {
   isThrowError: boolean;
@@ -38,7 +42,7 @@ class HomePage extends React.Component<object, HomePageState> {
         isLoading: false,
         products: [],
         fetchErrorMessage:
-          error instanceof Error ? error.message : 'An unknown error occurred.',
+          error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE,
       });
     }
   };
@@ -47,7 +51,7 @@ class HomePage extends React.Component<object, HomePageState> {
     const { isThrowError, isLoading, products, fetchErrorMessage } = this.state;
 
     if (isThrowError) {
-      throw new Error('Unexpected ERROR');
+      throw new Error(USER_GENERATED_ERROR_MESSAGE);
     }
 
     return (
