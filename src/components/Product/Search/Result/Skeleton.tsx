@@ -3,11 +3,7 @@ import SkeletonImage from '../../../common/Skeleton/Image';
 import SkeletonString from '../../../common/Skeleton/String';
 import SkeletonList from '../../../common/Skeleton/List';
 
-interface ProductSearchResultSkeletonProps {
-  rowCount?: number;
-}
-
-class ProductSearchResultSkeleton extends React.Component<ProductSearchResultSkeletonProps> {
+class ProductSearchResultSkeleton extends React.Component {
   render() {
     return (
       <SkeletonList className="flex justify-start items-center odd:bg-white even:bg-gray-50 px-7 py-4">
