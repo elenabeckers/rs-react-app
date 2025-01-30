@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 interface SkeletonListProps {
   rowCount?: number;
@@ -8,24 +8,18 @@ interface SkeletonListProps {
 
 const DEFAULT_SKELETON_ROW_COUNT: number = 3;
 
-class SkeletonList extends React.Component<SkeletonListProps> {
-  render() {
-    const {
-      rowCount = DEFAULT_SKELETON_ROW_COUNT,
-      children,
-      className = '',
-    } = this.props;
-
-    return (
-      <>
-        {Array.from({ length: rowCount }).map((_, index) => (
-          <li key={index} className={className}>
-            {children}
-          </li>
-        ))}
-      </>
-    );
-  }
-}
+const SkeletonList = ({
+  rowCount = DEFAULT_SKELETON_ROW_COUNT,
+  children,
+  className = '',
+}: SkeletonListProps) => (
+  <>
+    {Array.from({ length: rowCount }).map((_, index) => (
+      <li key={index} className={className}>
+        {children}
+      </li>
+    ))}
+  </>
+);
 
 export default SkeletonList;
