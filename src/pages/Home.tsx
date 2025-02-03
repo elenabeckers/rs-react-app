@@ -18,12 +18,12 @@ const HomePage = () => {
 
   const onErrorThrow = () => setIsThrowError(true);
 
-  const onSearch = async (searchTerm: string): Promise<void> => {
+  const onSearch = async (searchQuery: string): Promise<void> => {
     try {
       setIsLoading(true);
       setFetchErrorMessage(null);
 
-      const searchResponse = await searchProducts(searchTerm.trim());
+      const searchResponse = await searchProducts(searchQuery.trim());
       setProducts(searchResponse.products);
       setIsLoading(false);
     } catch (error) {

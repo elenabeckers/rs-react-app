@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import AsyncButton from '../../common/AsyncButton';
+import useSearchQuery from '../../../hooks/useSearchQuery';
 
 interface ProductSearchInputProps {
-  onSearch: (searchTerm: string) => Promise<void>;
+  onSearch: (searchQuery: string) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -12,21 +13,19 @@ const ProductSearchInput = ({
   onSearch,
   isLoading,
 }: ProductSearchInputProps) => {
-  const [searchTerm, setSearchTerm] = useState<string>(
-    localStorage.getItem('searchTerm') ?? ''
-  );
+  const [searchQuery, setSearchQuery, storeSearchQuery] = useSearchQuery();
 
   useEffect(() => {
-    onSearch(searchTerm.trim());
+    onSearch(searchQuery.trim());
   }, []);
 
   const handleSearch = () => {
-    onSearch(searchTerm.trim());
-    localStorage.setItem('searchTerm', searchTerm.trim());
+    onSearch(searchQuery.trim());
+    storeSearchQuery(searchQuery.trim());
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    setSearchQuery(e.target.value);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -42,7 +41,7 @@ const ProductSearchInput = ({
         autoFocus
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        value={searchTerm}
+        value={searchQuery}
         disabled={isLoading}
         className="w-full p-4 ps-8"
         placeholder={INPUT_PLACEHOLDER_TEXT}
