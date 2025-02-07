@@ -7,12 +7,12 @@ const useSearchQuery = (initialValue = '') => {
     () => localStorage.getItem(STORAGE_KEY) || initialValue
   );
 
-  const storeSearchQuery = (value: string) => {
-    setSearchQuery(value);
-    localStorage.setItem(STORAGE_KEY, value);
+  const storeSearchQuery = (query: string) => {
+    setSearchQuery(query);
+    localStorage.setItem(STORAGE_KEY, query);
   };
 
-  return [searchQuery, setSearchQuery, storeSearchQuery] as const;
+  return [searchQuery, storeSearchQuery] as const;
 };
 
 export default useSearchQuery;

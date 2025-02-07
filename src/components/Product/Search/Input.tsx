@@ -1,27 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import AsyncButton from '../../common/AsyncButton';
-import useSearchQuery from '../../../hooks/useSearchQuery';
 
 interface ProductSearchInputProps {
-  onSearch: (searchQuery: string) => Promise<void>;
+  initialValue?: string;
+  onSearch: (searchQuery: string) => void;
   isLoading: boolean;
 }
 
 const INPUT_PLACEHOLDER_TEXT = 'Search for products like Phones, Laptops...';
 
 const ProductSearchInput = ({
+  initialValue = '',
   onSearch,
   isLoading,
 }: ProductSearchInputProps) => {
-  const [searchQuery, setSearchQuery, storeSearchQuery] = useSearchQuery();
-
-  useEffect(() => {
-    onSearch(searchQuery.trim());
-  }, []);
+  const [searchQuery, setSearchQuery] = useState(initialValue);
 
   const handleSearch = () => {
     onSearch(searchQuery.trim());
-    storeSearchQuery(searchQuery.trim());
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

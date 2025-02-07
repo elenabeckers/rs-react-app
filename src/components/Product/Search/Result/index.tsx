@@ -1,6 +1,4 @@
 import { Product } from '../../../../services/product.types';
-
-import ProductSearchResultSkeleton from './Skeleton';
 import ProductSearchResultCard from './Card';
 import NotificationMessage from '../../../common/NotificationMessage';
 
@@ -8,6 +6,7 @@ import {
   FETCH_ERROR_MESSAGE,
   NO_RESULTS_FOUND_MESSAGE,
 } from '../../../../constants/errorMessages';
+import Loader from '../../../common/Loader';
 
 interface ProductSearchResultProps {
   products: Product[];
@@ -22,7 +21,7 @@ const ProductSearchResult = ({
 }: ProductSearchResultProps) => (
   <ul className="w-full h-full flex flex-col text-sm text-left text-gray-500">
     {isLoading ? (
-      <ProductSearchResultSkeleton />
+      <Loader />
     ) : errorMessage ? (
       <NotificationMessage
         title={errorMessage}
