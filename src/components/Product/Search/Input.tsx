@@ -48,6 +48,7 @@ const ProductSearchInput = ({
         disabled={isLoading}
         isLoading={isLoading}
         className="absolute end-2.5 bottom-2.5"
+        aria-label="Search"
       >
         Search
       </AsyncButton>
