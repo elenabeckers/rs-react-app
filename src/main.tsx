@@ -10,7 +10,7 @@ import AppRouter from './routes/AppRouter';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.VITE_BASENAME}>
         <AppRouter />
       </BrowserRouter>
     </ErrorBoundary>
