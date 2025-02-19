@@ -1,110 +1,78 @@
-import { useEffect, useRef, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router';
-import { ITEMS_DISPLAY_LIMIT, searchProducts } from '../services/product';
-import { Product } from '../services/product.types';
+import { useSearchProductQuery } from '../services/product';
 import ProductSearchInput from '../components/Product/Search/Input';
 import ProductSearchResult from '../components/Product/Search/Result';
-import { UNKNOWN_ERROR_MESSAGE } from '../constants/errorMessages';
 import Pagination from '../components/common/Pagination';
 import useSearchQuery from '../hooks/useSearchQuery';
+import { useDispatch } from 'react-redux';
+import { setData, setPage } from '../store/slices/searchProductSlice';
+import { useEffect } from 'react';
+import { useTheme } from '../hooks/useTheme';
+import { Theme } from '../constants';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const navigateRef = useRef(navigate);
+  const dispatch = useDispatch();
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isPaginationVisible, setIsPaginationVisible] =
-    useState<boolean>(false);
-
+  const { theme, toggleTheme } = useTheme();
   const [searchQuery, storeSearchQuery] = useSearchQuery();
-  const [totalItems, setTotalItems] = useState<number>(0);
 
-  const [products, setProducts] = useState<Product[]>([]);
-
-  const { page, productId } = useParams<{
+  const { page } = useParams<{
     page?: string;
-    productId?: string;
   }>();
-  const currentPage = page ? parseInt(page, 10) : 1;
+
+  const productSearchPage = Number(page);
+
+  const { data, error, isFetching } = useSearchProductQuery(
+    {
+      searchQuery,
+      page: productSearchPage,
+    },
+    { skip: !searchQuery }
+  );
 
   useEffect(() => {
-    const fetchSearchProducts = async () => {
-      try {
-        setIsLoading(true);
-        setErrorMessage(null);
+    dispatch(setData(data));
+  }, [data, dispatch]);
 
-        const searchResponse = await searchProducts(searchQuery, currentPage);
-        const { skip, total, products } = searchResponse;
+  useEffect(() => {
+    dispatch(setPage(productSearchPage));
+  }, [productSearchPage, dispatch]);
 
-        if (skip > total) {
-          navigateRef.current('/search/1');
-          return;
-        }
-
-        setIsPaginationVisible(true);
-        setTotalItems(total);
-        setProducts(products);
-      } catch (error) {
-        setProducts([]);
-        setIsPaginationVisible(false);
-        setTotalItems(0);
-        setErrorMessage(
-          error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSearchProducts();
-  }, [currentPage, searchQuery]);
+  const onSearch = (query: string) => {
+    navigate('/search/1');
+    storeSearchQuery(query);
+  };
 
   const onPageChange = (page: number) => {
     navigate(`/search/${page}`);
   };
 
-  const onSearch = (query: string) => {
-    navigate(`/search/1`);
-    storeSearchQuery(query);
-    setIsPaginationVisible(false);
-  };
-
-  const closeDetails = () => navigate(`/search/${currentPage}`);
-
   return (
-    <div className="min-h-screen mx-auto py-12 px-10">
+    <div className="min-h-screen mx-auto pt-14 pb-20 px-10 overflow-auto dark:bg-gray-800 ">
+      <div className="fixed top-5 right-5">
+        <button onClick={toggleTheme}>
+          {theme === Theme.LIGHT ? 'Dark Mode' : 'Light Mode'}
+        </button>
+      </div>
+
       <header className="w-1/2 mx-auto mb-12">
         <ProductSearchInput
           initialValue={searchQuery}
           onSearch={onSearch}
-          isLoading={isLoading}
+          isLoading={isFetching}
         />
       </header>
       <main className="flex mx-auto">
-        <div
-          className="h-[70vh] w-1/2 overflow-auto flex-1"
-          onClick={closeDetails}
-        >
-          <ProductSearchResult
-            products={products}
-            isLoading={isLoading}
-            errorMessage={errorMessage}
-          />
+        <div className="h-[65vh] w-1/2 overflow-auto flex-1">
+          <ProductSearchResult error={error as string | undefined} />
         </div>
-        {productId && (
-          <div className="w-1/2 relative bg-gray-100">
-            <button className="absolute top-4 right-6" onClick={closeDetails}>
-              Close
-            </button>
-            <Outlet />
-          </div>
-        )}
+        <Outlet />
       </main>
       <Pagination
-        isVisible={isPaginationVisible}
-        currentPage={currentPage}
-        totalPages={Math.ceil(totalItems / ITEMS_DISPLAY_LIMIT)}
+        isVisible={!isFetching && Boolean(data?.products.length)}
+        currentPage={productSearchPage}
+        totalPages={data?.totalPages ?? 0}
         onPageChange={onPageChange}
       />
     </div>

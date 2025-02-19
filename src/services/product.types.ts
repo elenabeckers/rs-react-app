@@ -13,9 +13,15 @@ export interface Product {
   returnPolicy: string;
 }
 
-export interface SearchProductsResponse {
+export interface SearchProductResponse {
   products: Product[];
   limit: number;
   skip: number;
   total: number;
+}
+
+export interface SearchProductResponseDTO {
+  products: Product[];
+  skip: number;
+  totalPages: number;
 }

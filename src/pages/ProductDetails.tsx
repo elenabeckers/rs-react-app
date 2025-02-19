@@ -1,60 +1,66 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import { Product } from '../services/product.types';
-import { getProductDetails } from '../services/product';
+import { useGetProductDetailsQuery } from '../services/product';
 import ProductDetails from '../components/Product/Details';
 import {
   FETCH_ERROR_MESSAGE,
   NO_RESULTS_FOUND_MESSAGE,
-  UNKNOWN_ERROR_MESSAGE,
 } from '../constants/errorMessages';
 import NotificationMessage from '../components/common/NotificationMessage';
 import Loader from '../components/common/Loader';
+import { useNavigate, useParams } from 'react-router';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setProduct } from '../store/slices/productDetailsSlice';
 
 const ProductDetailsPage = () => {
-  const { productId } = useParams<{ productId: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { productId, page: searchProductPage } = useParams<{
+    productId?: string;
+    page?: string;
+  }>();
+
+  const productDetailsPage = productId ? Number(productId) : undefined;
+
+  const { data, error, isFetching } = useGetProductDetailsQuery(
+    productDetailsPage as number,
+    {
+      skip: !productDetailsPage,
+    }
+  );
 
   useEffect(() => {
-    const fetchProductDetails = async () => {
-      if (productId) {
-        setIsLoading(true);
-        try {
-          const getProductDetailsResponse = await getProductDetails(
-            Number(productId)
-          );
-          setProduct(getProductDetailsResponse);
-        } catch (error) {
-          setErrorMessage(
-            error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
-          );
-          setProduct(null);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
+    if (data) {
+      dispatch(setProduct(data));
+    }
+  }, [data, dispatch]);
 
-    fetchProductDetails();
-  }, [productId]);
+  const closeProductDetailsPage = () =>
+    navigate(`/search/${searchProductPage}`);
 
   return (
-    <>
-      {isLoading ? (
-        <Loader />
-      ) : errorMessage ? (
-        <NotificationMessage
-          title={errorMessage}
-          description={FETCH_ERROR_MESSAGE}
-        />
-      ) : !product ? (
-        <NotificationMessage description={NO_RESULTS_FOUND_MESSAGE} />
-      ) : (
-        <ProductDetails product={product} />
-      )}
-    </>
+    productDetailsPage && (
+      <div className="w-1/2 relative bg-gray-100">
+        <button
+          className="absolute top-4 right-6"
+          onClick={closeProductDetailsPage}
+        >
+          Close
+        </button>
+        {isFetching ? (
+          <Loader />
+        ) : error ? (
+          <NotificationMessage
+            title={error as string | undefined}
+            description={FETCH_ERROR_MESSAGE}
+          />
+        ) : !data ? (
+          <NotificationMessage description={NO_RESULTS_FOUND_MESSAGE} />
+        ) : (
+          <ProductDetails />
+        )}
+      </div>
+    )
   );
 };
 
