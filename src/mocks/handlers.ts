@@ -5,9 +5,10 @@ import {
   mockFirstPageSearchProductResponse,
   mockSecondPageSearchProductResponse,
 } from './productMock';
+import { API_URL } from '../constants';
 
 export const handlers = [
-  http.get('https://dummyjson.com/products/search', ({ request }) => {
+  http.get(`${API_URL}/products/search`, ({ request }) => {
     const searchParams = new URL(request.url).searchParams;
 
     const q = searchParams.get('q');
@@ -26,7 +27,7 @@ export const handlers = [
     }
   }),
 
-  http.get('https://dummyjson.com/products/:id', (req) => {
+  http.get(`${API_URL}/products/:id`, (req) => {
     const { id } = req.params;
 
     if (id === '1') {

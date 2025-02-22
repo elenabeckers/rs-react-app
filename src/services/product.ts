@@ -4,10 +4,7 @@ import {
   SearchProductResponse,
   SearchProductResponseDTO,
 } from './product.types';
-
-export const API_URL: string = 'https://dummyjson.com';
-
-export const ITEMS_DISPLAY_LIMIT: number = 10;
+import { API_URL, ITEMS_DISPLAY_LIMIT } from '../constants';
 
 export const productApi = createApi({
   reducerPath: 'productApi',
