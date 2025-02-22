@@ -8,6 +8,7 @@ import AppRouter from './routes/AppRouter';
 
 import './index.css';
 import { ThemeProvider } from './context/ThemeProvider';
+import { BrowserRouter } from 'react-router';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -19,7 +20,9 @@ createRoot(rootElement).render(
     <ErrorBoundary>
       <ThemeProvider>
         <Provider store={store}>
-          <AppRouter />
+          <BrowserRouter>
+            <AppRouter />
+          </BrowserRouter>
         </Provider>
       </ThemeProvider>
     </ErrorBoundary>

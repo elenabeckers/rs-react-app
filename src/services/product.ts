@@ -5,7 +5,7 @@ import {
   SearchProductResponseDTO,
 } from './product.types';
 
-const API_URL: string = import.meta.env.VITE_API_URL;
+export const API_URL: string = 'https://dummyjson.com';
 
 export const ITEMS_DISPLAY_LIMIT: number = 10;
 

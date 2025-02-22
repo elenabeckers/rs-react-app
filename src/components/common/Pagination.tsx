@@ -1,18 +1,21 @@
-interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  isVisible: boolean;
-}
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { selectSearchResultPagination } from '../../store/selectors';
 
-const Pagination = ({
-  currentPage,
-  totalPages,
-  onPageChange,
-  isVisible,
-}: PaginationProps) => {
+const Pagination = () => {
+  const navigate = useNavigate();
+
+  const { isFetching, currentPage, totalPages, isProductsEmpty } = useSelector(
+    selectSearchResultPagination
+  );
+
+  const onPageChange = (page: number) => {
+    navigate(`/search/${page}`);
+  };
+
   return (
-    isVisible && (
+    !isFetching &&
+    !isProductsEmpty && (
       <div className="flex items-center justify-center gap-4 mt-6">
         <button
           className="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700 disabled:hover:bg-gray-200 dark:disabled:hover:bg-gray-600"

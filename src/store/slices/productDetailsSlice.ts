@@ -14,7 +14,7 @@ const initialState: ProductDetailsState = {
   product: undefined,
 };
 
-const searchProductSlice = createSlice({
+const productDetailsSlice = createSlice({
   name: 'productDetails',
   initialState,
   reducers: {
@@ -48,5 +48,5 @@ const searchProductSlice = createSlice({
   },
 });
 
-export const { setProductId, setProduct } = searchProductSlice.actions;
-export default searchProductSlice.reducer;
+export const { setProductId, setProduct } = productDetailsSlice.actions;
+export default productDetailsSlice.reducer;

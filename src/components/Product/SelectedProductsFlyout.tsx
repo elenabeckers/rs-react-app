@@ -1,14 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { clearAll } from '../../store/slices/selectedProductsSlice';
-import { store } from '../../store';
+import { RootState } from '../../store';
 import { convertProductsToCSV, downloadCSV } from '../../utils/csvUtils';
 
 const SelectedProductsFlyout = () => {
   const dispatch = useDispatch();
 
   const selectedProducts = useSelector(
-    (state: ReturnType<typeof store.getState>) =>
-      state.selectedProducts.products
+    (state: RootState) => state.selectedProducts.products
   );
 
   if (selectedProducts.length === 0) return null;

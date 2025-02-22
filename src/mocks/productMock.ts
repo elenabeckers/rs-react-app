@@ -1,4 +1,4 @@
-import { Product } from '../src/services/product.types';
+import { Product } from '../services/product.types';
 
 export const mockProduct: Product = {
   id: 1,
@@ -38,6 +38,25 @@ export const mockProduct_2: Product = {
   returnPolicy: '30 days return policy',
 };
 
+export const mockProduct_3: Product = {
+  id: 3,
+  title: 'Powder Canister',
+  description:
+    'The Powder Canister is a finely milled setting powder designed to set makeup and control shine. With a lightweight and translucent formula, it provides a smooth and matte finish.',
+  thumbnail:
+    'https://cdn.dummyjson.com/products/images/beauty/Powder%20Canister/thumbnail.png',
+  images: [
+    'https://cdn.dummyjson.com/products/images/beauty/Powder%20Canister/1.png',
+  ],
+  category: 'beauty',
+  price: 14.99,
+  rating: 3.82,
+  stock: 59,
+  warrantyInformation: '2 year warranty',
+  shippingInformation: 'Ships in 1-2 business days',
+  returnPolicy: '60 days return policy',
+};
+
 export const mockSearchProductResponse = {
   products: [mockProduct, mockProduct_2],
   limit: 10,
@@ -52,9 +71,16 @@ export const mockEmptySearchProductResponse = {
   total: 0,
 };
 
-export const mockFewPagesSearchProductResponse = {
+export const mockFirstPageSearchProductResponse = {
   products: [mockProduct, mockProduct_2],
-  limit: 1,
+  limit: 10,
   skip: 0,
-  total: 2,
+  total: 11,
+};
+
+export const mockSecondPageSearchProductResponse = {
+  products: [mockProduct_3],
+  limit: 10,
+  skip: 10,
+  total: 11,
 };

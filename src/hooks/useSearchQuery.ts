@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const STORAGE_KEY = 'searchQuery';
 
-const useSearchQuery = (initialValue = '') => {
+export const useSearchQuery = (initialValue = '') => {
   const [searchQuery, setSearchQuery] = useState(
     () => localStorage.getItem(STORAGE_KEY) || initialValue
   );
@@ -14,5 +14,3 @@ const useSearchQuery = (initialValue = '') => {
 
   return [searchQuery, storeSearchQuery] as const;
 };
-
-export default useSearchQuery;

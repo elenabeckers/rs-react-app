@@ -2,7 +2,7 @@ import type { Config } from 'jest';
 
 const config: Config = {
   preset: 'ts-jest',
-  testEnvironment: '@bufbuild/jest-environment-jsdom',
+  testEnvironment: 'jest-fixed-jsdom',
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
@@ -17,7 +17,9 @@ const config: Config = {
     '!src/__tests__/setup.ts',
     '!src/App.tsx',
     '!src/main.tsx',
+    '!src/utils/test-utils.tsx',
   ],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 };
 
 export default config;

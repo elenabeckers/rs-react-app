@@ -1,9 +1,6 @@
 import { useGetProductDetailsQuery } from '../services/product';
 import ProductDetails from '../components/Product/Details';
-import {
-  FETCH_ERROR_MESSAGE,
-  NO_RESULTS_FOUND_MESSAGE,
-} from '../constants/errorMessages';
+import { FETCH_ERROR_MESSAGE } from '../constants/errorMessages';
 import NotificationMessage from '../components/common/NotificationMessage';
 import Loader from '../components/common/Loader';
 import { useNavigate, useParams } from 'react-router';
@@ -40,7 +37,7 @@ const ProductDetailsPage = () => {
 
   return (
     productDetailsPage && (
-      <div className="w-1/2 relative bg-gray-100">
+      <div className="w-1/2 relative bg-gray-100" data-testid="product-details">
         <button
           className="absolute top-4 right-6"
           onClick={closeProductDetailsPage}
@@ -54,8 +51,6 @@ const ProductDetailsPage = () => {
             title={error as string | undefined}
             description={FETCH_ERROR_MESSAGE}
           />
-        ) : !data ? (
-          <NotificationMessage description={NO_RESULTS_FOUND_MESSAGE} />
         ) : (
           <ProductDetails />
         )}

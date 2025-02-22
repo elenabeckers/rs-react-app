@@ -1,83 +1,47 @@
 import '@testing-library/jest-dom';
-import {
-  render,
-  screen,
-  fireEvent,
-  act,
-  waitFor,
-} from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router';
-import {
-  mockEmptySearchProductResponse,
-  mockProduct,
-  mockSearchProductResponse,
-} from '../../__mocks__/product';
-import { getProductDetails, searchProducts } from '../services/product';
-import ProductDetailsPage from './ProductDetails';
+import { renderWithProviders } from '../utils/test-utils';
 import HomePage from './Home';
-import {
-  NO_RESULTS_FOUND_MESSAGE,
-  UNKNOWN_ERROR_MESSAGE,
-} from '../constants/errorMessages';
+import { screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { Route, Routes } from 'react-router';
+import { mockProduct, mockProduct_3 } from '../mocks/productMock';
+import { NO_RESULTS_FOUND_MESSAGE } from '../constants/errorMessages';
+import { downloadCSV } from '../utils/csvUtils';
 
-import { useNavigate } from 'react-router';
-
-jest.mock('../services/product', () => ({
-  getProductDetails: jest.fn().mockResolvedValue(mockProduct),
-  searchProducts: jest.fn().mockResolvedValue(mockSearchProductResponse),
-}));
-
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useNavigate: jest.fn(),
+jest.mock('../utils/csvUtils', () => ({
+  ...jest.requireActual('../utils/csvUtils'),
+  downloadCSV: jest.fn(),
 }));
 
 describe('HomePage', () => {
-  it('displays loader while loads products and hide loader', async () => {
-    (searchProducts as jest.Mock).mockResolvedValue(mockSearchProductResponse);
-
-    render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByTestId('loader')).toBeInTheDocument();
-
-    await waitFor(() => expect(searchProducts).toHaveBeenCalledWith('', 1));
-
-    expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
-
-    mockSearchProductResponse.products.forEach((product) => {
-      expect(screen.getByText(product.title)).toBeInTheDocument();
-    });
+  beforeEach(() => {
+    localStorage.setItem('searchQuery', 'saved search query');
   });
 
-  it('displays an error message when there is a loading error', async () => {
-    (searchProducts as jest.Mock).mockRejectedValue(new Error('Loading error'));
-
-    render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>
+  it('loads data and displays Loader on initial load', async () => {
+    localStorage.setItem('searchQuery', 'saved search query');
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/1'] }
     );
-
     expect(screen.getByTestId('loader')).toBeInTheDocument();
 
-    await waitFor(() =>
-      expect(screen.getByText('Loading error')).toBeInTheDocument()
-    );
+    await waitFor(() => {
+      expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
+      expect(screen.getByText(mockProduct.description)).toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
   });
 
   it('displays NO_RESULTS_FOUND_MESSAGE message if product is not found', async () => {
-    (searchProducts as jest.Mock).mockResolvedValue(
-      mockEmptySearchProductResponse
-    );
-
-    render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>
+    localStorage.setItem('searchQuery', 'empty');
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/1'] }
     );
 
     await waitFor(() =>
@@ -85,91 +49,217 @@ describe('HomePage', () => {
     );
   });
 
-  it('displays UNKNOWN_ERROR_MESSAGE when there is an unknown error', async () => {
-    (searchProducts as jest.Mock).mockRejectedValue('Unknown error');
+  it('restores search query from localStorage on initial load', async () => {
+    localStorage.setItem('searchQuery', 'saved search query');
 
-    render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/1'] }
     );
 
-    expect(screen.getByTestId('loader')).toBeInTheDocument();
-
-    await waitFor(() =>
-      expect(screen.getByText(UNKNOWN_ERROR_MESSAGE)).toBeInTheDocument()
-    );
-  });
-
-  it('navigates to product details on product click', async () => {
-    (searchProducts as jest.Mock).mockResolvedValue(mockSearchProductResponse);
-
-    render(
-      <MemoryRouter initialEntries={['/search/1']}>
-        <Routes>
-          <Route path="/search/:page?" element={<HomePage />}>
-            <Route path="details/:productId" element={<ProductDetailsPage />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await act(async () => {
-      expect(searchProducts).toHaveBeenCalled();
-    });
-
-    await act(async () => {
-      const productLink = await screen.findByText(mockProduct.title);
-      fireEvent.click(productLink);
-    });
-
-    await act(async () => {
-      expect(getProductDetails).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(
+        screen.getByDisplayValue('saved search query')
+      ).toBeInTheDocument();
+      expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
     });
   });
 
-  it('closes the details when the Close button is clicked', async () => {
-    const mockNavigate = jest.fn();
-    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-    (searchProducts as jest.Mock).mockResolvedValue(mockSearchProductResponse);
-    (getProductDetails as jest.Mock).mockResolvedValue(mockProduct);
+  it('stores search query into localStorage on new search', async () => {
+    localStorage.setItem('searchQuery', 'saved search query');
 
-    render(
-      <MemoryRouter initialEntries={['/search/1/details/1']}>
-        <Routes>
-          <Route path="/search/:page?" element={<HomePage />}>
-            <Route path="details/:productId" element={<ProductDetailsPage />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/1'] }
     );
 
-    expect(screen.getByText('Close')).toBeInTheDocument();
+    const searchInput = screen.getByTestId('search-input');
+    const searchButton = screen.getByRole('button', { name: /search/i });
 
-    await act(async () => {
-      fireEvent.click(screen.getByText('Close'));
+    //Checking that initial request id finished
+    await waitFor(() => {
+      expect(
+        screen.getByDisplayValue('saved search query')
+      ).toBeInTheDocument();
+      expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith('/search/1');
+    await act(async () => {
+      fireEvent.change(searchInput, { target: { value: 'new search query' } });
+      fireEvent.click(searchButton);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('new search query')).toBeInTheDocument();
+      expect(localStorage.getItem('searchQuery')).toBe('new search query');
+    });
   });
 
-  it('pagination updates URL query parameter when page changes', async () => {
-    const mockNavigate = jest.fn();
-    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-    (searchProducts as jest.Mock).mockResolvedValue(mockSearchProductResponse);
+  it('search data on Enter Click', async () => {
+    localStorage.setItem('searchQuery', 'saved search query');
 
-    render(
-      <MemoryRouter initialEntries={['/search/1']}>
-        <HomePage />
-      </MemoryRouter>
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/1'] }
     );
 
-    await waitFor(() => expect(screen.getByText('Next')).toBeInTheDocument());
+    const searchInput = screen.getByTestId('search-input');
+
+    //Checking that initial request id finished
+    await waitFor(() => {
+      expect(
+        screen.getByDisplayValue('saved search query')
+      ).toBeInTheDocument();
+      expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
+    });
 
     await act(async () => {
+      fireEvent.change(searchInput, { target: { value: 'new search query' } });
+      fireEvent.keyDown(searchInput, {
+        key: 'Enter',
+        code: 'Enter',
+        charCode: 13,
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('new search query')).toBeInTheDocument();
+      expect(localStorage.getItem('searchQuery')).toBe('new search query');
+    });
+  });
+
+  it('should switch theme when the button is clicked', async () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/1'] }
+    );
+
+    const themeButton = screen.getByText('Dark Mode');
+    fireEvent.click(themeButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Light Mode')).toBeInTheDocument();
+      expect(screen.getByTestId('theme-container')).toHaveClass('dark');
+    });
+
+    fireEvent.click(themeButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Dark Mode')).toBeInTheDocument();
+      expect(screen.getByTestId('theme-container')).toHaveClass('light');
+    });
+  });
+
+  it('renders Selected Products Flyout with selected products', async () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/1'] }
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
+    });
+
+    const productCheckboxes = screen.getAllByRole('checkbox');
+
+    fireEvent.click(productCheckboxes[0]);
+
+    expect(screen.getByText(/1 items are selected/i)).toBeInTheDocument();
+  });
+
+  it('unselects all products when "Unselect all" button is clicked', async () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/1'] }
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
+    });
+
+    const productCheckboxes = screen.getAllByRole('checkbox');
+
+    fireEvent.click(productCheckboxes[0]);
+    fireEvent.click(productCheckboxes[1]);
+
+    expect(screen.getByText(/2 items are selected/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText(/Unselect all/i));
+
+    expect(screen.queryByText(/items are selected/i)).not.toBeInTheDocument();
+  });
+
+  it('calls downloadCSV when "Download" button is clicked', async () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/1'] }
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
+    });
+
+    const productCheckboxes = screen.getAllByRole('checkbox');
+
+    fireEvent.click(productCheckboxes[0]);
+
+    expect(screen.getByText(/1 items are selected/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText(/Download/i));
+
+    expect(downloadCSV).toHaveBeenCalledWith(
+      expect.any(String),
+      '1_products.csv'
+    );
+  });
+
+  it('navigates to the next page when clicking the "Next" button', async () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/1'] }
+    );
+
+    await waitFor(async () => {
+      expect(screen.getByText('Next')).toBeInTheDocument();
       fireEvent.click(screen.getByText('Next'));
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith('/search/2');
+    await waitFor(() => {
+      expect(screen.getByText(mockProduct_3.title)).toBeInTheDocument();
+    });
+  });
+
+  it('navigates to the previous page when clicking the "Previous" button', async () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/search/:page?" element={<HomePage />} />
+      </Routes>,
+      { initialEntries: ['/search/2'] }
+    );
+
+    await waitFor(async () => {
+      expect(screen.getByText('Previous')).toBeInTheDocument();
+      fireEvent.click(screen.getByText('Previous'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
+    });
   });
 });

@@ -38,7 +38,6 @@ const ProductSearchResultCard = ({
             }`
           }
           to={`details/${product.id}`}
-          onClick={(e) => e.stopPropagation()}
         >
           {product.title}
         </NavLink>

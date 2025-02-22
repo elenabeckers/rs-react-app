@@ -9,7 +9,8 @@ import {
 } from '../../../../constants/errorMessages';
 import Loader from '../../../common/Loader';
 import SelectedProductsFlyout from '../../SelectedProductsFlyout';
-import { store } from '../../../../store';
+import { RootState } from '../../../../store';
+import { selectSearchResults } from '../../../../store/selectors';
 
 interface ProductSearchResultProps {
   error?: string;
@@ -19,23 +20,20 @@ const ProductSearchResult = ({ error }: ProductSearchResultProps) => {
   const dispatch = useDispatch();
 
   const selectedProducts = useSelector(
-    (state: ReturnType<typeof store.getState>) =>
-      state.selectedProducts.products
+    (state: RootState) => state.selectedProducts.products
   );
 
-  const { isFetching, foundProducts } = useSelector(
-    (state: ReturnType<typeof store.getState>) => {
-      const { isFetching, data } = state.searchProduct;
-      return { isFetching, foundProducts: data?.products };
-    }
-  );
+  const { isFetching, foundProducts } = useSelector(selectSearchResults);
 
   const onToggleProduct = (product: Product) => {
     dispatch(toggleItem(product));
   };
 
   return (
-    <div className="w-full h-full flex flex-col text-sm text-left text-gray-500">
+    <div
+      className="w-full h-full flex flex-col text-sm text-left text-gray-500"
+      data-testid="search-result"
+    >
       {isFetching ? (
         <Loader />
       ) : error ? (
