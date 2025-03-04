@@ -1,20 +1,26 @@
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
 import { selectSearchResultPagination } from '../../store/selectors';
+import { useRouter } from 'next/router';
+import { usePageLoader } from '../../hooks/usePageLoader';
 
 const Pagination = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const { query = '', page = 1 } = router.query;
 
-  const { isFetching, currentPage, totalPages, isProductsEmpty } = useSelector(
+  const currentPage = Number(page);
+
+  const { totalPages, isProductsEmpty } = useSelector(
     selectSearchResultPagination
   );
 
+  const isLoading = usePageLoader();
+
   const onPageChange = (page: number) => {
-    navigate(`/search/${page}`);
+    router.push(`?query=${query}&page=${page}`);
   };
 
   return (
-    !isFetching &&
+    !isLoading &&
     !isProductsEmpty && (
       <div className="flex items-center justify-center gap-4 mt-6">
         <button

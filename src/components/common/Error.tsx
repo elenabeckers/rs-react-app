@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { GENERIC_ERROR_MESSAGE } from '../constants/errorMessages';
+import { GENERIC_ERROR_MESSAGE } from '../../constants/errorMessages';
 
 interface ErrorPageProps {
   errorTitle: string;

@@ -1,10 +1,10 @@
 import '@testing-library/jest-dom';
-import { renderWithProviders } from '../utils/test-utils';
-import ProductDetailsPage from '../pages/ProductDetails';
+import { renderWithProviders } from '../../../utils/test-utils';
+import ProductDetailsPage from '.';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { Route, Routes } from 'react-router';
-import { mockProduct } from '../mocks/productMock';
-import { FETCH_ERROR_MESSAGE } from '../constants/errorMessages';
+import { mockProduct } from '../../../mocks/productMock';
+import { FETCH_ERROR_MESSAGE } from '../../../constants/errorMessages';
 import HomePage from './Home';
 
 describe('ProductDetailsPage', () => {

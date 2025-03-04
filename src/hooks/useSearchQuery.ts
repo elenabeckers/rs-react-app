@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'searchQuery';
 
-export const useSearchQuery = (initialValue = '') => {
-  const [searchQuery, setSearchQuery] = useState(
-    () => localStorage.getItem(STORAGE_KEY) || initialValue
-  );
+export const useSearchQuery = () => {
+  const [searchQuery, setSearchQuery] = useState<string | undefined>();
+
+  useEffect(() => {
+    const savedQuery = localStorage.getItem(STORAGE_KEY);
+    setSearchQuery(savedQuery || undefined);
+  }, []);
 
   const storeSearchQuery = (query: string) => {
     setSearchQuery(query);

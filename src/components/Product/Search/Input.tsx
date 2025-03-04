@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AsyncButton from '../../common/AsyncButton';
-import { selectSearchInput } from '../../../store/selectors';
-import { useSelector } from 'react-redux';
+import { usePageLoader } from '../../../hooks/usePageLoader';
 
 interface ProductSearchInputProps {
   initialValue?: string;
@@ -16,7 +15,11 @@ const ProductSearchInput = ({
 }: ProductSearchInputProps) => {
   const [searchQuery, setSearchQuery] = useState(initialValue);
 
-  const { isFetching } = useSelector(selectSearchInput);
+  useEffect(() => {
+    setSearchQuery(initialValue);
+  }, [initialValue]);
+
+  const isLoading = usePageLoader();
 
   const handleSearch = () => {
     onSearch(searchQuery.trim());
@@ -40,7 +43,7 @@ const ProductSearchInput = ({
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         value={searchQuery}
-        disabled={isFetching}
+        disabled={isLoading}
         className="w-full p-4 ps-8"
         placeholder={INPUT_PLACEHOLDER_TEXT}
         data-testid="search-input"
@@ -48,8 +51,8 @@ const ProductSearchInput = ({
       <AsyncButton
         type="submit"
         onClick={handleSearch}
-        disabled={isFetching}
-        isLoading={isFetching}
+        disabled={isLoading}
+        isLoading={isLoading}
         className="absolute end-2.5 bottom-2.5"
         aria-label="Search"
       >

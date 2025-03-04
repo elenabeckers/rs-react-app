@@ -11,6 +11,7 @@ import Loader from '../../../common/Loader';
 import SelectedProductsFlyout from '../../SelectedProductsFlyout';
 import { RootState } from '../../../../store';
 import { selectSearchResults } from '../../../../store/selectors';
+import { usePageLoader } from '../../../../hooks/usePageLoader';
 
 interface ProductSearchResultProps {
   error?: string;
@@ -19,11 +20,13 @@ interface ProductSearchResultProps {
 const ProductSearchResult = ({ error }: ProductSearchResultProps) => {
   const dispatch = useDispatch();
 
+  const isLoading = usePageLoader();
+
   const selectedProducts = useSelector(
     (state: RootState) => state.selectedProducts.products
   );
 
-  const { isFetching, foundProducts } = useSelector(selectSearchResults);
+  const { foundProducts } = useSelector(selectSearchResults);
 
   const onToggleProduct = (product: Product) => {
     dispatch(toggleItem(product));
@@ -34,7 +37,7 @@ const ProductSearchResult = ({ error }: ProductSearchResultProps) => {
       className="w-full h-full flex flex-col text-sm text-left text-gray-500"
       data-testid="search-result"
     >
-      {isFetching ? (
+      {isLoading ? (
         <Loader />
       ) : error ? (
         <NotificationMessage title={error} description={FETCH_ERROR_MESSAGE} />
