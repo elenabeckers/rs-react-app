@@ -66,7 +66,6 @@ const SearchPage = ({ searchProduct = null }: SearchPageProps) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps((store) => async ({ query }) => {
     const page = query.page ? Number(query.page) : 1;

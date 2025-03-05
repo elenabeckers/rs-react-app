@@ -1,6 +1,8 @@
 import { useSelector } from 'react-redux';
 import { selectedProductDetail } from '../../../store/selectors';
 
+import Image from 'next/image';
+
 const ProductDetailsCard = () => {
   const { productDetails } = useSelector(selectedProductDetail);
 
@@ -46,7 +48,7 @@ const ProductDetailsCard = () => {
           <p className="text-sm text-gray-600">{productDetails.returnPolicy}</p>
         </div>
       </div>
-      <img
+      <Image
         height="150"
         width="150"
         src={productDetails.images[0]}

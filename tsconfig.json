@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
+    "plugins": [{ "name": "next" }],
     "module": "ESNext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
@@ -25,23 +26,17 @@
     "strict": false,
     "noEmit": true,
     "incremental": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
   },
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ],
   "include": [
+    "./dist/types/**/*.ts",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
   ],
   "exclude": [
+    "./node_modules",
     "node_modules"
   ]
 }

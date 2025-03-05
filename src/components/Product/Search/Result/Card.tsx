@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Product } from '../../../../services/product.types';
 import { useRouter } from 'next/router';
 
@@ -35,7 +36,7 @@ const ProductSearchResultCard = ({
         onChange={onToggle}
         className="mr-4"
       />
-      <img
+      <Image
         height="150"
         width="150"
         src={product.thumbnail}
