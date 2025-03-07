@@ -7,7 +7,6 @@ export const selectProductDetails = (state: RootState) => state.productDetails;
 export const selectSearchResults = createSelector(
   [selectSearchProduct],
   (searchProduct) => ({
-    isFetching: searchProduct.isFetching,
     foundProducts: searchProduct.data?.products,
   })
 );
