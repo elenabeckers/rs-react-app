@@ -1,9 +1,11 @@
-import '@testing-library/jest-dom';
 import { renderWithProviders } from '../utils/test-utils';
-import HomePage from './Home';
+import HomePage from '../pages/index';
 import { screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { Route, Routes } from 'react-router';
-import { mockProduct, mockProduct_3 } from '../mocks/productMock';
+import {
+  mockEmptySearchProductResponseDTO,
+  mockProduct,
+  mockSearchProductResponseDTO,
+} from '../mocks/productMock';
 import { NO_RESULTS_FOUND_MESSAGE } from '../constants/errorMessages';
 import { downloadCSV } from '../utils/csvUtils';
 
@@ -17,31 +19,10 @@ describe('HomePage', () => {
     localStorage.setItem('searchQuery', 'saved search query');
   });
 
-  it('loads data and displays Loader on initial load', async () => {
-    localStorage.setItem('searchQuery', 'saved search query');
-    renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/1'] }
-    );
-    expect(screen.getByTestId('loader')).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
-      expect(screen.getByText(mockProduct.description)).toBeInTheDocument();
-    });
-
-    expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
-  });
-
   it('displays NO_RESULTS_FOUND_MESSAGE message if product is not found', async () => {
     localStorage.setItem('searchQuery', 'empty');
     renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/1'] }
+      <HomePage searchProduct={mockEmptySearchProductResponseDTO} />
     );
 
     await waitFor(() =>
@@ -53,10 +34,7 @@ describe('HomePage', () => {
     localStorage.setItem('searchQuery', 'saved search query');
 
     renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/1'] }
+      <HomePage searchProduct={mockSearchProductResponseDTO} />
     );
 
     await waitFor(() => {
@@ -71,10 +49,7 @@ describe('HomePage', () => {
     localStorage.setItem('searchQuery', 'saved search query');
 
     renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/1'] }
+      <HomePage searchProduct={mockSearchProductResponseDTO} />
     );
 
     const searchInput = screen.getByTestId('search-input');
@@ -103,10 +78,7 @@ describe('HomePage', () => {
     localStorage.setItem('searchQuery', 'saved search query');
 
     renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/1'] }
+      <HomePage searchProduct={mockSearchProductResponseDTO} />
     );
 
     const searchInput = screen.getByTestId('search-input');
@@ -136,10 +108,7 @@ describe('HomePage', () => {
 
   it('should switch theme when the button is clicked', async () => {
     renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/1'] }
+      <HomePage searchProduct={mockSearchProductResponseDTO} />
     );
 
     const themeButton = screen.getByText('Dark Mode');
@@ -160,10 +129,7 @@ describe('HomePage', () => {
 
   it('renders Selected Products Flyout with selected products', async () => {
     renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/1'] }
+      <HomePage searchProduct={mockSearchProductResponseDTO} />
     );
 
     await waitFor(() => {
@@ -179,10 +145,7 @@ describe('HomePage', () => {
 
   it('unselects all products when "Unselect all" button is clicked', async () => {
     renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/1'] }
+      <HomePage searchProduct={mockSearchProductResponseDTO} />
     );
 
     await waitFor(() => {
@@ -203,10 +166,7 @@ describe('HomePage', () => {
 
   it('calls downloadCSV when "Download" button is clicked', async () => {
     renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/1'] }
+      <HomePage searchProduct={mockSearchProductResponseDTO} />
     );
 
     await waitFor(() => {
@@ -225,41 +185,5 @@ describe('HomePage', () => {
       expect.any(String),
       '1_products.csv'
     );
-  });
-
-  it('navigates to the next page when clicking the "Next" button', async () => {
-    renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/1'] }
-    );
-
-    await waitFor(async () => {
-      expect(screen.getByText('Next')).toBeInTheDocument();
-      fireEvent.click(screen.getByText('Next'));
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText(mockProduct_3.title)).toBeInTheDocument();
-    });
-  });
-
-  it('navigates to the previous page when clicking the "Previous" button', async () => {
-    renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />} />
-      </Routes>,
-      { initialEntries: ['/search/2'] }
-    );
-
-    await waitFor(async () => {
-      expect(screen.getByText('Previous')).toBeInTheDocument();
-      fireEvent.click(screen.getByText('Previous'));
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
-    });
   });
 });

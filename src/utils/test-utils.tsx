@@ -7,12 +7,12 @@ import type { RootState } from '../store';
 import { setupStore } from '../store';
 import { configureStore } from '@reduxjs/toolkit/react';
 import { ThemeProvider } from '../context/ThemeProvider';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouterProvider } from 'next-router-mock/MemoryRouterProvider';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   preloadedState?: Partial<RootState>;
   store?: ReturnType<typeof configureStore>;
-  initialEntries?: string[];
+  url?: string;
 }
 
 export function renderWithProviders(
@@ -22,19 +22,17 @@ export function renderWithProviders(
   const {
     preloadedState = {},
     store = setupStore(preloadedState),
-    initialEntries = ['/'],
+    url = '/',
     ...renderOptions
   } = extendedRenderOptions;
 
   const Wrapper = ({ children }: PropsWithChildren) => {
     return (
-      <ThemeProvider>
-        <Provider store={store}>
-          <MemoryRouter initialEntries={initialEntries}>
-            {children}
-          </MemoryRouter>
-        </Provider>
-      </ThemeProvider>
+      <MemoryRouterProvider url={url}>
+        <ThemeProvider>
+          <Provider store={store}>{children}</Provider>
+        </ThemeProvider>
+      </MemoryRouterProvider>
     );
   };
 

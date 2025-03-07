@@ -1,20 +1,18 @@
-import '@testing-library/jest-dom';
-import { renderWithProviders } from '../../../utils/test-utils';
-import ProductDetailsPage from '.';
+import { renderWithProviders } from '../utils/test-utils';
+import ProductDetailsPage from '../components/Product/Details';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
-import { Route, Routes } from 'react-router';
-import { mockProduct } from '../../../mocks/productMock';
-import { FETCH_ERROR_MESSAGE } from '../../../constants/errorMessages';
-import HomePage from './Home';
+import {
+  mockProduct,
+  mockSearchProductResponseDTO,
+} from '../mocks/productMock';
+import { FETCH_ERROR_MESSAGE } from '../constants/errorMessages';
+import HomePage from '../pages/index';
 
 describe('ProductDetailsPage', () => {
   it('should show loader when data is fetching', async () => {
-    renderWithProviders(
-      <Routes>
-        <Route path="details/:productId" element={<ProductDetailsPage />} />
-      </Routes>,
-      { initialEntries: ['/details/1'] }
-    );
+    renderWithProviders(<ProductDetailsPage />, {
+      url: '/?query=&page=1&productId=1',
+    });
     await waitFor(() => {
       const loader = screen.getByTestId('loader');
       expect(loader).toBeInTheDocument();
@@ -22,12 +20,9 @@ describe('ProductDetailsPage', () => {
   });
 
   it('should display product details when data is fetched successfully', async () => {
-    renderWithProviders(
-      <Routes>
-        <Route path="details/:productId" element={<ProductDetailsPage />} />
-      </Routes>,
-      { initialEntries: ['/details/1'] }
-    );
+    renderWithProviders(<ProductDetailsPage />, {
+      url: '/?query=&page=1&productId=1',
+    });
 
     await waitFor(() => screen.getByText(mockProduct.title));
     expect(screen.getByText(mockProduct.title)).toBeInTheDocument();
@@ -35,12 +30,9 @@ describe('ProductDetailsPage', () => {
   });
 
   it('should show error message when there is an error', async () => {
-    renderWithProviders(
-      <Routes>
-        <Route path="details/:productId" element={<ProductDetailsPage />} />
-      </Routes>,
-      { initialEntries: ['/details/2'] }
-    );
+    renderWithProviders(<ProductDetailsPage />, {
+      url: '/?query=&page=1&productId=2',
+    });
 
     await waitFor(() => {
       expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
@@ -52,13 +44,9 @@ describe('ProductDetailsPage', () => {
   });
 
   it('should not render the component if productDetailsPage is undefined', () => {
-    renderWithProviders(
-      <Routes>
-        <Route path="details/:productId" element={<ProductDetailsPage />} />
-      </Routes>,
-      { initialEntries: ['/details/bla'] }
-    );
-    renderWithProviders(<ProductDetailsPage />);
+    renderWithProviders(<ProductDetailsPage />, {
+      url: '/?query=&page=1',
+    });
 
     expect(screen.queryByTestId('loader')).not.toBeInTheDocument();
     expect(screen.queryByText('No results found.')).not.toBeInTheDocument();
@@ -66,12 +54,10 @@ describe('ProductDetailsPage', () => {
 
   it('opens product details on product click', async () => {
     renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />}>
-          <Route path="details/:productId" element={<ProductDetailsPage />} />
-        </Route>
-      </Routes>,
-      { initialEntries: ['/search/1'] }
+      <HomePage searchProduct={mockSearchProductResponseDTO} />,
+      {
+        url: '/?query=&page=1',
+      }
     );
 
     await waitFor(() => {
@@ -92,12 +78,8 @@ describe('ProductDetailsPage', () => {
 
   it('closes the product details when the Close button is clicked', async () => {
     renderWithProviders(
-      <Routes>
-        <Route path="/search/:page?" element={<HomePage />}>
-          <Route path="details/:productId" element={<ProductDetailsPage />} />
-        </Route>
-      </Routes>,
-      { initialEntries: ['/search/1/details/1'] }
+      <HomePage searchProduct={mockSearchProductResponseDTO} />,
+      { url: '/?query=&page=1&productId=1' }
     );
 
     expect(screen.getByTestId('product-details')).toBeInTheDocument();
