@@ -2,25 +2,21 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Product } from '../../services/product.types';
 import { productApi } from '../../services/product';
 
-interface ProductDetailsState {
-  productId?: number;
+export interface ProductDetailsState {
   isFetching: boolean;
-  product?: Product;
+  product: Product | null;
 }
 
 const initialState: ProductDetailsState = {
-  productId: undefined,
   isFetching: false,
-  product: undefined,
+  product: null,
 };
 
 const productDetailsSlice = createSlice({
   name: 'productDetails',
   initialState,
   reducers: {
-    setProductId: (state, action: PayloadAction<number>) => {
-      state.productId = action.payload;
-    },
+    HYDRATE: (state, action) => ({ ...state, ...action.payload }),
     setProduct: (state, action: PayloadAction<Product>) => {
       state.product = action.payload;
     },
@@ -48,5 +44,5 @@ const productDetailsSlice = createSlice({
   },
 });
 
-export const { setProductId, setProduct } = productDetailsSlice.actions;
+export const { setProduct } = productDetailsSlice.actions;
 export default productDetailsSlice.reducer;

@@ -1,16 +1,13 @@
-import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
+import { screen } from '@testing-library/react';
 import ErrorBoundary from './ErrorBoundary';
+import { renderWithProviders } from 'src/utils/test-utils';
 
 describe('ErrorBoundary', () => {
   it('renders children when there is no error', () => {
-    render(
-      <MemoryRouter>
-        <ErrorBoundary>
-          <div>Child Component</div>
-        </ErrorBoundary>
-      </MemoryRouter>
+    renderWithProviders(
+      <ErrorBoundary>
+        <div>Child Component</div>
+      </ErrorBoundary>
     );
 
     expect(screen.getByText('Child Component')).toBeInTheDocument();
@@ -25,12 +22,10 @@ describe('ErrorBoundary', () => {
       throw new Error('Test error');
     };
 
-    render(
-      <MemoryRouter>
-        <ErrorBoundary>
-          <ErrorComponent />
-        </ErrorBoundary>
-      </MemoryRouter>
+    renderWithProviders(
+      <ErrorBoundary>
+        <ErrorComponent />
+      </ErrorBoundary>
     );
 
     expect(screen.getByText('Test error')).toBeInTheDocument();

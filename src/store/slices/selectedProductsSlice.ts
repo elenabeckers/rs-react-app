@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Product } from '../../services/product.types';
 
-interface SelectedProductsState {
+export interface SelectedProductsState {
   products: Product[];
 }
 
@@ -13,6 +13,7 @@ const selectedProductsSlice = createSlice({
   name: 'selectedProducts',
   initialState,
   reducers: {
+    HYDRATE: (state, action) => ({ ...state, ...action.payload }),
     toggleItem: (state, action: PayloadAction<Product>) => {
       const product = action.payload;
 

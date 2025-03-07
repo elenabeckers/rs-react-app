@@ -1,14 +1,42 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
+    "plugins": [{ "name": "next" }],
     "module": "ESNext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
-    "jsx": "react-jsx"
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@components/": [
+        "components/"
+      ],
+      "@pages/": [
+        "pages/"
+      ]
+    },
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
   },
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+  "include": [
+    "./dist/types/**/*.ts",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "./node_modules",
+    "node_modules"
   ]
 }

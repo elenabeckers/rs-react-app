@@ -64,11 +64,23 @@ export const mockSearchProductResponse = {
   total: 2,
 };
 
+export const mockSearchProductResponseDTO = {
+  products: [mockProduct, mockProduct_2],
+  skip: 0,
+  totalPages: 2,
+};
+
 export const mockEmptySearchProductResponse = {
   products: [],
   limit: 10,
   skip: 0,
   total: 0,
+};
+
+export const mockEmptySearchProductResponseDTO = {
+  products: [],
+  skip: 0,
+  totalPages: 0,
 };
 
 export const mockFirstPageSearchProductResponse = {

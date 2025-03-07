@@ -1,5 +1,7 @@
-import { NavLink } from 'react-router';
+import Link from 'next/link';
+import Image from 'next/image';
 import { Product } from '../../../../services/product.types';
+import { useRouter } from 'next/router';
 
 interface ProductSearchResultCardProps {
   product: Product;
@@ -12,6 +14,20 @@ const ProductSearchResultCard = ({
   isSelected,
   onToggle,
 }: ProductSearchResultCardProps) => {
+  const router = useRouter();
+  const { page = 1, query = '', productId } = router.query;
+
+  const isActive = product.id === Number(productId);
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    router.push(
+      `/?query=${query}&page=${page}&productId=${product.id}`,
+      undefined,
+      { shallow: true }
+    );
+  };
+
   return (
     <li className="px-6 flex odd:bg-white dark:odd:bg-gray-200 even:bg-gray-50  dark:even:bg-gray-300">
       <input
@@ -20,27 +36,20 @@ const ProductSearchResultCard = ({
         onChange={onToggle}
         className="mr-4"
       />
-      <img
+      <Image
         height="150"
         width="150"
         src={product.thumbnail}
         alt={product.title}
       />
       <div className="flex flex-col justify-center px-8">
-        <NavLink
-          className={({ isActive, isPending }) =>
-            `text-xl mb-2 block transition-colors ${
-              isPending
-                ? 'text-gray-500'
-                : isActive
-                  ? 'text-blue-600 font-normal underline'
-                  : 'text-gray-900 hover:text-blue-400'
-            }`
-          }
-          to={`details/${product.id}`}
+        <Link
+          href={`/?query=${query}&page=${page}&productId=${product.id}`}
+          onClick={handleClick}
+          className={`text-xl mb-2 block transition-colors ${isActive ? 'text-blue-500' : 'text-gray-900'} hover:text-blue-400`}
         >
           {product.title}
-        </NavLink>
+        </Link>
         <p>{product.description}</p>
       </div>
     </li>

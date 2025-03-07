@@ -25,3 +25,7 @@ dist-ssr
 
 # Test directories and files
 coverage
+
+# Next.js directories and files
+.next/
+.*.env

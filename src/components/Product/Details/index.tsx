@@ -1,23 +1,19 @@
-import { useGetProductDetailsQuery } from '../services/product';
-import ProductDetails from '../components/Product/Details';
-import { FETCH_ERROR_MESSAGE } from '../constants/errorMessages';
-import NotificationMessage from '../components/common/NotificationMessage';
-import Loader from '../components/common/Loader';
-import { useNavigate, useParams } from 'react-router';
+import { useGetProductDetailsQuery } from '../../../services/product';
+import ProductDetailsCard from './Card';
+import { FETCH_ERROR_MESSAGE } from '../../../constants/errorMessages';
+import NotificationMessage from '../../common/NotificationMessage';
+import Loader from '../../common/Loader';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setProduct } from '../store/slices/productDetailsSlice';
+import { setProduct } from '../../../store/slices/productDetailsSlice';
+import { useRouter } from 'next/router';
 
-const ProductDetailsPage = () => {
-  const navigate = useNavigate();
+const ProductDetails = () => {
+  const router = useRouter();
+  const { page, query, productId } = router.query;
   const dispatch = useDispatch();
 
-  const { productId, page: searchProductPage } = useParams<{
-    productId?: string;
-    page?: string;
-  }>();
-
-  const productDetailsPage = productId ? Number(productId) : undefined;
+  const productDetailsPage = productId ? Number(productId) : null;
 
   const { data, error, isFetching } = useGetProductDetailsQuery(
     productDetailsPage as number,
@@ -33,7 +29,7 @@ const ProductDetailsPage = () => {
   }, [data, dispatch]);
 
   const closeProductDetailsPage = () =>
-    navigate(`/search/${searchProductPage}`);
+    router.push(`/?query=${query}&page=${page}`, undefined, { shallow: true });
 
   return (
     productDetailsPage && (
@@ -52,11 +48,11 @@ const ProductDetailsPage = () => {
             description={FETCH_ERROR_MESSAGE}
           />
         ) : (
-          <ProductDetails />
+          <ProductDetailsCard />
         )}
       </div>
     )
   );
 };
 
-export default ProductDetailsPage;
+export default ProductDetails;
