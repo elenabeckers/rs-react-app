@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  distDir: 'dist',
+  distDir: '.next',
   images: {
     domains: ['cdn.dummyjson.com'],
   },

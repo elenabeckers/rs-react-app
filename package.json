@@ -11,8 +11,7 @@
     "format:fix": "prettier --write .",
     "prepare": "husky",
     "test": "jest --coverage",
-    "predeploy": "next build",
-    "deploy": "gh-pages -d dist"
+    "predeploy": "next build"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
