@@ -2,6 +2,9 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
+import { BrowserRouter, Route, Routes } from 'react-router';
+import UncontrolledForm from './pages/UncontrolledForm.tsx';
+import ReactHookForm from './pages/ReactHookForm.tsx';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -10,6 +13,12 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<App />} />
+        <Route path="/react-hook-form" element={<ReactHookForm />} />
+        <Route path="/uncontrolled-form" element={<UncontrolledForm />} />
+      </Routes>
+    </BrowserRouter>
   </StrictMode>
 );
