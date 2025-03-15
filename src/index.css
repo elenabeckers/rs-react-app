@@ -1,0 +1,43 @@
+@import 'tailwindcss';
+
+body {
+  @apply bg-gray-100;
+}
+
+a {
+  @apply text-blue-600 hover:underline mb-4 inline-block;
+}
+
+label {
+  @apply block text-sm font-medium text-gray-700;
+}
+
+input {
+  @apply w-full mt-1 p-2 text-gray-900 bg-gray-50 border border-gray-300 rounded-lg text-sm;
+}
+
+input[type='checkbox'] {
+  @apply cursor-pointer;
+}
+
+input[type='file'] {
+  @apply cursor-pointer file:border-0 file:bg-blue-700 file:text-white file:py-2 file:px-4 file:rounded-md hover:file:bg-blue-800 file:cursor-pointer;
+}
+
+select {
+  @apply w-full mt-1 p-2 text-gray-900 bg-gray-50 border border-gray-300 rounded-lg text-sm;
+}
+
+button {
+  @apply w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-base px-4 py-3 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
+}
+
+.error {
+  @apply text-red-500 text-sm h-2;
+}
+
+label::after {
+  content: '*';
+  color: red;
+  margin-left: 4px;
+}
