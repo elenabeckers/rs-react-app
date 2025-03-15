@@ -1,15 +1,15 @@
-import { Form } from '../store/formSlice';
+import { FormTypeDTO } from '../types/form';
 
 interface TileProps {
   title: string;
-  data: Form;
+  data: FormTypeDTO;
   isNew: boolean;
 }
 
 const Tile = ({ title, data, isNew }: TileProps) => {
   return (
     <div
-      className={`p-6 bg-white w-full max-w-lg bg-white shadow-lg rounded-lg p-6 ${isNew && 'bg-green-500'} shadow-md`}
+      className={`p-6 w-full max-w-lg shadow-lg rounded-lg p-10 ${isNew ? 'bg-green-100' : 'bg-white'}`}
     >
       <h3 className="text-xl font-bold mb-4">{title}</h3>
       <div className="space-y-2">
@@ -57,7 +57,9 @@ const Tile = ({ title, data, isNew }: TileProps) => {
                 className="w-24 h-24 object-cover rounded"
               />
             ) : (
-              'No Image'
+              <span className="w-24 h-24 block bg-gray-200 flex items-center justify-center rounded">
+                No Image
+              </span>
             )}
           </div>
         </div>

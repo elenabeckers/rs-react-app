@@ -1,24 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '.';
-
-export type ValidationErrors = Partial<Record<keyof Form, string>>;
-
-export interface Form {
-  name: string;
-  age: string;
-  email: string;
-  password: string;
-  passwordRepeat: string;
-  gender: string;
-  terms: boolean;
-  picture: string;
-  country: string;
-}
+import { FormTypeDTO, ValidationErrors } from '../types/form';
 
 export interface FormState {
   uncontrolledForm: {
-    form: Form;
+    form: FormTypeDTO;
     errors: ValidationErrors;
+    isNewData: boolean;
+  };
+  reactHookForm: {
+    form: FormTypeDTO;
     isNewData: boolean;
   };
 }
@@ -27,7 +18,7 @@ const initialState: FormState = {
   uncontrolledForm: {
     form: {
       name: '',
-      age: '',
+      age: 0,
       email: '',
       password: '',
       passwordRepeat: '',
@@ -39,13 +30,27 @@ const initialState: FormState = {
     errors: {},
     isNewData: false,
   },
+  reactHookForm: {
+    form: {
+      name: '',
+      age: 0,
+      email: '',
+      password: '',
+      passwordRepeat: '',
+      gender: '',
+      picture: '',
+      terms: false,
+      country: '',
+    },
+    isNewData: false,
+  },
 };
 
 const formSlice = createSlice({
   name: 'form',
   initialState,
   reducers: {
-    saveUncontrolledForm: (state, action: PayloadAction<Form>) => {
+    saveUncontrolledForm: (state, action: PayloadAction<FormTypeDTO>) => {
       state.uncontrolledForm.form = action.payload;
       state.uncontrolledForm.isNewData = true;
     },
@@ -55,8 +60,15 @@ const formSlice = createSlice({
     ) => {
       state.uncontrolledForm.errors = action.payload;
     },
-    setUncontrolledFromNewData: (state, action: PayloadAction<boolean>) => {
+    setUncontrolledFromIsNewData: (state, action: PayloadAction<boolean>) => {
       state.uncontrolledForm.isNewData = action.payload;
+    },
+    saveReactHookForm: (state, action: PayloadAction<FormTypeDTO>) => {
+      state.reactHookForm.form = action.payload;
+      state.reactHookForm.isNewData = true;
+    },
+    setReactHookIsNewData: (state, action: PayloadAction<boolean>) => {
+      state.reactHookForm.isNewData = action.payload;
     },
   },
 });
@@ -64,7 +76,9 @@ const formSlice = createSlice({
 export const {
   saveUncontrolledForm,
   setUncontrolledFromErrors,
-  setUncontrolledFromNewData,
+  setUncontrolledFromIsNewData,
+  saveReactHookForm,
+  setReactHookIsNewData,
 } = formSlice.actions;
 
 export const selectUncontrolledFormData = (state: RootState) =>
@@ -73,7 +87,13 @@ export const selectUncontrolledFormData = (state: RootState) =>
 export const selectUncontrolledFormErrors = (state: RootState) =>
   state.form.uncontrolledForm.errors;
 
-export const selectUncontrolledFormNewData = (state: RootState) =>
+export const selectUncontrolledFormIsNewData = (state: RootState) =>
   state.form.uncontrolledForm.isNewData;
+
+export const selectReactHookFormFormData = (state: RootState) =>
+  state.form.reactHookForm.form;
+
+export const selectReactHookFormIsNewData = (state: RootState) =>
+  state.form.reactHookForm.isNewData;
 
 export default formSlice.reducer;

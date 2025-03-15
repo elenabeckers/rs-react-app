@@ -1,5 +1,5 @@
 'use client';
-import { FormEvent, useRef } from 'react';
+import { FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router';
 import CountrySelect from '../components/CountrySelect';
@@ -9,14 +9,13 @@ import {
   setUncontrolledFromErrors,
 } from '../store/formSlice';
 import {
-  convertFormDataToFormState,
+  formDataToFormTypeDTO,
   formValidationSchema,
   validationErrorsToObject,
 } from '../utils/formUtils';
 import { ValidationError } from 'yup';
 
 const UncontrolledForm = () => {
-  const formRef = useRef<HTMLFormElement>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -24,16 +23,13 @@ const UncontrolledForm = () => {
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!formRef.current) return;
-
-    const formData = new FormData(formRef.current);
-
+    const formData = new FormData(e.target as HTMLFormElement);
     try {
-      const formObject = await convertFormDataToFormState(formData);
+      const formObject = Object.fromEntries(formData.entries());
       await formValidationSchema.validate(formObject, { abortEarly: false });
+      const formDTO = await formDataToFormTypeDTO(formData);
 
-      dispatch(saveUncontrolledForm(formObject));
+      dispatch(saveUncontrolledForm(formDTO));
       dispatch(setUncontrolledFromErrors({}));
       navigate('/');
     } catch (err) {
@@ -56,7 +52,7 @@ const UncontrolledForm = () => {
         <h2 className="text-2xl font-bold text-gray-700 mb-4">
           Uncontrolled Form
         </h2>
-        <form ref={formRef} onSubmit={onSubmit} className="space-y-2">
+        <form onSubmit={onSubmit} className="space-y-2">
           <div>
             <label htmlFor="name">Name</label>
             <input id="name" name="name" type="text" />
@@ -83,17 +79,16 @@ const UncontrolledForm = () => {
             <p className="error">{errors.passwordRepeat}</p>
           </div>
           <div>
-            <label htmlFor="gender">
-              Gender:
-              <select id="gender" name="gender" defaultValue="">
-                <option value="" disabled>
-                  Select
-                </option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-            </label>
+            <label htmlFor="gender">Gender: </label>
+            <select id="gender" name="gender" defaultValue="">
+              <option value="" disabled>
+                Select
+              </option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+
             <p className="error">{errors.gender}</p>
           </div>
           <div className="flex items-center flex-col py-4">
@@ -101,13 +96,13 @@ const UncontrolledForm = () => {
             <label htmlFor="terms">Accept Terms and Conditions agreement</label>
             <p className="error">{errors.terms}</p>
           </div>
-
           <div>
             <label htmlFor="picture">Upload Picture</label>
             <input
               id="picture"
               name="picture"
               type="file"
+              multiple={false}
               accept="image/png, image/jpeg"
             />
             <p className="error">{errors.picture}</p>

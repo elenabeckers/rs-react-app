@@ -35,3 +35,9 @@ button {
 .error {
   @apply text-red-500 text-sm h-2;
 }
+
+label::after {
+  content: '*';
+  color: red;
+  margin-left: 4px;
+}
