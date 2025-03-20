@@ -110,7 +110,7 @@ function App() {
     });
   };
 
-  const onSortChange = (type: SortType | '', order: SortOrder | '') => {
+  const onSort = (type: SortType | '', order: SortOrder | '') => {
     if (!order) {
       setSortConfig({ type: '', order });
     } else {
@@ -136,7 +136,7 @@ function App() {
           label="Sort By Name:"
           placeholder="No Sorting"
           value={sortConfig.type === SortType.Name ? sortConfig.order : ''}
-          onChange={(value) => onSortChange(SortType.Name, value as SortOrder)}
+          onChange={(value) => onSort(SortType.Name, value as SortOrder)}
           options={[SortOrder.Asc, SortOrder.Desc]}
         />
 
@@ -146,9 +146,7 @@ function App() {
           value={
             sortConfig.type === SortType.Population ? sortConfig.order : ''
           }
-          onChange={(value) =>
-            onSortChange(SortType.Population, value as SortOrder)
-          }
+          onChange={(value) => onSort(SortType.Population, value as SortOrder)}
           options={[SortOrder.Asc, SortOrder.Desc]}
         />
       </div>
