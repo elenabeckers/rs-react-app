@@ -1,20 +1,16 @@
+import useVisitedCountries from '../hooks/useVisitedCountries';
 import { Country } from '../types';
 import CountryListItem from './CountryListItem';
 import Loader from './Loader';
 
 interface CountryListProps {
   countries: Country[];
-  visitedCountries: Set<string> | null;
   isLoading: boolean;
-  onClick: (country: string) => void;
 }
 
-const CountryList = ({
-  countries,
-  visitedCountries,
-  isLoading,
-  onClick,
-}: CountryListProps) => {
+const CountryList = ({ countries, isLoading }: CountryListProps) => {
+  const { visitedCountries, visitCountry } = useVisitedCountries();
+
   if (isLoading) return <Loader />;
 
   return (
@@ -26,7 +22,7 @@ const CountryList = ({
             key={country.name.common}
             country={country}
             isVisited={isVisited}
-            onClick={onClick}
+            onClick={visitCountry}
           />
         );
       })}

@@ -7,3 +7,5 @@ export enum SortType {
   Name = 'Name',
   Population = 'Population',
 }
+
+export const SortingOptions = [SortOrder.Asc, SortOrder.Desc];
