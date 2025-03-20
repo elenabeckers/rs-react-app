@@ -11,7 +11,12 @@ import {
   storeVisitedCountries,
 } from './api';
 import Select from './components/Select';
-import { SortOrder } from './const';
+import { SortOrder, SortType } from './const';
+
+interface SortConfigInterface {
+  type: SortType | '';
+  order: SortOrder | '';
+}
 
 function App() {
   const [countries, setCountries] = useState<Country[]>([]);
@@ -22,8 +27,11 @@ function App() {
 
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<string>('');
-  const [nameSortOrder, setNameSortOrder] = useState<string>('');
-  const [populationSortOrder, setPopulationSortOrder] = useState<string>('');
+
+  const [sortConfig, setSortConfig] = useState<SortConfigInterface>({
+    type: '',
+    order: '',
+  });
 
   const [filteredCountries, setFilteredCountries] = useState<Country[]>([]);
 
@@ -43,7 +51,6 @@ function App() {
 
       setVisitedCountries(getVisitedCountries());
 
-      console.log(getVisitedCountries());
       setRegions(uniqueRegions);
       setIsLoading(false);
     };
@@ -70,23 +77,24 @@ function App() {
       filtered = filterCountriesByRegion(filtered, selectedRegion);
     }
 
-    if (nameSortOrder) {
-      filtered = sortCountriesByName(filtered, nameSortOrder as SortOrder);
-    }
-
-    if (populationSortOrder) {
-      filtered = sortCountriesByPopulation(
-        filtered,
-        populationSortOrder as SortOrder
-      );
+    switch (sortConfig.type) {
+      case SortType.Name:
+        filtered = sortCountriesByName(filtered, sortConfig.order as SortOrder);
+        break;
+      case SortType.Population:
+        filtered = sortCountriesByPopulation(
+          filtered,
+          sortConfig.order as SortOrder
+        );
+        break;
     }
 
     setFilteredCountries(filtered);
   }, [
     searchTerm,
     selectedRegion,
-    nameSortOrder,
-    populationSortOrder,
+    sortConfig.type,
+    sortConfig.order,
     countries,
   ]);
 
@@ -100,6 +108,14 @@ function App() {
         return newVisited;
       }
     });
+  };
+
+  const onSortChange = (type: SortType | '', order: SortOrder | '') => {
+    if (!order) {
+      setSortConfig({ type: '', order });
+    } else {
+      setSortConfig({ type, order });
+    }
   };
 
   return (
@@ -119,16 +135,20 @@ function App() {
         <Select
           label="Sort By Name:"
           placeholder="No Sorting"
-          value={nameSortOrder}
-          onChange={setNameSortOrder}
+          value={sortConfig.type === SortType.Name ? sortConfig.order : ''}
+          onChange={(value) => onSortChange(SortType.Name, value as SortOrder)}
           options={[SortOrder.Asc, SortOrder.Desc]}
         />
 
         <Select
           label="Sort By Population:"
           placeholder="No Sorting"
-          value={populationSortOrder}
-          onChange={setPopulationSortOrder}
+          value={
+            sortConfig.type === SortType.Population ? sortConfig.order : ''
+          }
+          onChange={(value) =>
+            onSortChange(SortType.Population, value as SortOrder)
+          }
           options={[SortOrder.Asc, SortOrder.Desc]}
         />
       </div>
