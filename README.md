@@ -43,7 +43,6 @@ The detailed performance metrics are shown below.
 | 🔥 Flame Graph – Selection  | ![alt text](./src/assets/image2.png) | _(Insert after optimization)_ |
 | 📈 Ranked Chart – Click     | ![alt text](./src/assets/image3.png) | _No re-renders observed_      |
 | 📈 Ranked Chart – Selection | ![alt text](./src/assets/image4.png) | _(Insert after optimization)_ |
-| 📈 Timeline – Click         | ![alt text](./src/assets/image5.png) | _No re-renders observed_      |
-| 📈 Timeline – Selection     | ![alt text](./src/assets/image4.png) | _(Insert after optimization)_ |
+| 🕒 Timeline                 | ![alt text](./src/assets/image5.png) | _No re-renders observed_      |
 
 ---
