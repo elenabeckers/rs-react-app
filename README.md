@@ -8,7 +8,7 @@ The application loads and displays a list of countries, allowing users to filter
 
 #### 🧪 Actions Performed
 
-- Clicked on the region Select dropdown
+- Clicked on the Region Select
 - Selected a specific region (e.g., "Americas") to filter the country list
 
 #### ✅ Summary of Observations
@@ -20,71 +20,69 @@ The application loads and displays a list of countries, allowing users to filter
 
 The detailed performance metrics are shown below.
 
-| Interaction              | Component               | Render Reason (Before)                                    | Render Reason (After)                      | Render Duration (Before) | Render Duration (After) | Commit Duration (Before) | Commit Duration (After) |
-| ------------------------ | ----------------------- | --------------------------------------------------------- | ------------------------------------------ | ------------------------ | ----------------------- | ------------------------ | ----------------------- |
-| Click on Region dropdown | `CountryList`           | Updated `sortConfig`, `selectedRegion`, rerendered parent | Memoized and only changed `countries`      | \~32.8 ms                | \~1.5 ms                | \~32.8 ms                | \~3.4 ms                |
-|                          | `CountryListItem` (250) | Re-created `visitCountry` callback                        | Skipped due to `React.memo` + stable props | \~0.3–0.4 ms per item    | \~0 ms                  | \~80 ms total            | \~0 ms                  |
-|                          | `CountryFilteringPanel` | Updated `sortConfig` object and `onRegionChange` callback | Memoized, no change                        | \~1 ms                   | \~0 ms                  | \~1 ms                   | \~0 ms                  |
-|                          | `Select` (3)            | New `onChange` handlers and changing `value` props        | Skipped – props unchanged                  | \~0.2–0.4 ms each        | \~0 ms                  | \~1 ms total             | \~0 ms                  |
-|                          | `SearchInput`           | New `onChange` from parent                                | Skipped – props unchanged                  | \~0.4 ms                 | \~0 ms                  | \~0.4 ms                 | \~0 ms                  |
-| Select region            | `CountryList`           | Filtered countries list changed (`useMemo`)               | Same memoized result                       | \~39.8 ms                | \~1.5 ms                | \~39.8 ms                | \~3.4 ms                |
-|                          | `CountryListItem` (250) | Newly created `onClick`                                   | Skipped due to stable memoized props       | \~0.3–0.4 ms per item    | \~0 ms                  | \~80 ms total            | \~0 ms                  |
-|                          | `CountryFilteringPanel` | Prop changes from parent                                  | No re-render                               | \~1 ms                   | \~0 ms                  | \~1 ms                   | \~0 ms                  |
-|                          | `Select` (3)            | Change in `value` and non-memoized `onChange`             | Memoized, props unchanged                  | \~0.2–0.4 ms each        | \~0 ms                  | \~1 ms total             | \~0 ms                  |
-|                          | `SearchInput`           | New `onChange` from parent                                | No re-render                               | \~0.4 ms                 | \~0 ms                  | \~0.4 ms                 | \~0 ms                  |
+| Interaction             | Component               | Render Reason (Before)                                    | Render Reason (After)                      | Render Duration (Before) | Render Duration (After) | Commit Duration (Before) | Commit Duration (After) |
+| ----------------------- | ----------------------- | --------------------------------------------------------- | ------------------------------------------ | ------------------------ | ----------------------- | ------------------------ | ----------------------- |
+| Click on Region Select  | `CountryList`           | Updated `sortConfig`, `selectedRegion`, rerendered parent | Memoized and only changed `countries`      | \~32.8 ms                | \~1.5 ms                | \~32.8 ms                | \~3.4 ms                |
+|                         | `CountryListItem` (250) | Re-created `visitCountry` callback                        | Skipped due to `React.memo` + stable props | \~0.3–0.4 ms per item    | \~0 ms                  | \~80 ms total            | \~0 ms                  |
+|                         | `CountryFilteringPanel` | Updated `sortConfig` object and `onRegionChange` callback | Memoized, no change                        | \~1 ms                   | \~0 ms                  | \~1 ms                   | \~0 ms                  |
+|                         | `Select` (3)            | New `onChange` handlers and changing `value` props        | Skipped – props unchanged                  | \~0.2–0.4 ms each        | \~0 ms                  | \~1 ms total             | \~0 ms                  |
+|                         | `SearchInput`           | New `onChange` from parent                                | Skipped – props unchanged                  | \~0.4 ms                 | \~0 ms                  | \~0.4 ms                 | \~0 ms                  |
+| Select region from list | `CountryList`           | Filtered countries list changed (`useMemo`)               | Same memoized result                       | \~39.8 ms                | \~1.5 ms                | \~39.8 ms                | \~3.4 ms                |
+|                         | `CountryListItem` (250) | Newly created `onClick`                                   | Skipped due to stable memoized props       | \~0.3–0.4 ms per item    | \~0 ms                  | \~80 ms total            | \~0 ms                  |
+|                         | `CountryFilteringPanel` | Prop changes from parent                                  | No re-render                               | \~1 ms                   | \~0 ms                  | \~1 ms                   | \~0 ms                  |
+|                         | `Select` (3)            | Change in `value` and non-memoized `onChange`             | Memoized, props unchanged                  | \~0.2–0.4 ms each        | \~0 ms                  | \~1 ms total             | \~0 ms                  |
+|                         | `SearchInput`           | New `onChange` from parent                                | No re-render                               | \~0.4 ms                 | \~0 ms                  | \~0.4 ms                 | \~0 ms                  |
 
 ### 🖼️ Visual Chart Comparison - Filter by Region
 
-| View                                       | Before Optimization                  | After Optimization                    |
-| ------------------------------------------ | ------------------------------------ | ------------------------------------- |
-| 🔥 Flame Graph – Click on Region Dropdown  | ![alt text](./src/assets/image.png)  | _No re-renders observed_              |
-| 🔥 Flame Graph – Select Region             | ![alt text](./src/assets/image2.png) | ![alt text](./src/assets/fg-o-fr.png) |
-| 📈 Ranked Chart – Click on Region Dropdown | ![alt text](./src/assets/image3.png) | _No re-renders observed_              |
-| 📈 Ranked Chart – Select Region            | ![alt text](./src/assets/image4.png) | ![alt text](./src/assets/rc-o-fr.png) |
-| 🕒 Timeline                                | ![alt text](./src/assets/image5.png) | ![alt text](./src/assets/tl-o-fr.png) |
+| View                                      | Before Optimization                  | After Optimization                    |
+| ----------------------------------------- | ------------------------------------ | ------------------------------------- |
+| 🔥 Flame Graph – Click on Region Select   | ![alt text](./src/assets/image.png)  | _No re-renders observed_              |
+| 🔥 Flame Graph – Select Region from List  | ![alt text](./src/assets/image2.png) | ![alt text](./src/assets/fg-o-fr.png) |
+| 📈 Ranked Chart – Click on Region Select  | ![alt text](./src/assets/image3.png) | _No re-renders observed_              |
+| 📈 Ranked Chart – Select Region from List | ![alt text](./src/assets/image4.png) | ![alt text](./src/assets/rc-o-fr.png) |
+| 🕒 Timeline                               | ![alt text](./src/assets/image5.png) | ![alt text](./src/assets/tl-o-fr.png) |
 
 ---
 
 ### 📊 Profiling Results of Sort By Name
 
-#### 🧪 Actions Performed
+#### 🦪 Actions Performed
 
 - Clicked on the "Sort by Name" dropdown
 - Selected alphabetical sort order: `ascending`
 
 #### ✅ Summary of Observations
 
-- All components involved in sorting panel (`Select`, `CountryFilteringPanel`) re-rendered on both interactions
-- `CountryList` and its 250 `CountryListItem` children were re-rendered as a result of sortConfig change
-- Primary cause of re-renders: unstable `onChange`, recreated `onClick`, and `sortConfig` reference updates
-- Total commit duration exceeded **140 ms**
+- `CountryList` was fully re-rendered before optimization due to sort configuration changes (~33–39 ms), but after applying `useMemo`, it rendered only the updated result (~0.9 ms).
+- `CountryListItem` (250 items) previously re-rendered completely (~84–86 ms total) due to new `onClick` references. After applying `React.memo` and stabilizing callbacks, re-renders were eliminated (~0 ms).
+- `CountryFilteringPanel` and all `Select` components re-rendered before optimization because of recreated handlers and updated props. After optimization, these components remained stable and didn’t re-render.
+- Overall commit duration was reduced from over **140 ms** to just **~1.6 ms**, resulting in significantly improved responsiveness.Commit duration dropped from over **140 ms** to **\~1.6 ms** 🚀
 
 The detailed performance metrics are shown below.
 
-| Interaction                  | Component               | Render Reason (Before)                        | Render Reason (After) | Render Duration (Before) | Render Duration (After) | Commit Duration (Before) | Commit Duration (After) |
-| ---------------------------- | ----------------------- | --------------------------------------------- | --------------------- | ------------------------ | ----------------------- | ------------------------ | ----------------------- |
-| Click on Sort By Name Select | `CountryList`           | Rerender from sorting triggered by sortConfig |                       | ~33.5 ms                 |                         | ~33.5 ms                 |                         |
-|                              | `CountryListItem` (250) | Re-created `onClick` callback per item        |                       | ~0.3–0.4 ms per item     |                         | ~86 ms total             |                         |
-|                              | `CountryFilteringPanel` | Updated due to new sort handler               |                       | ~1.2 ms                  |                         | ~1.2 ms                  |                         |
-|                              | `Select` (3)            | onChange recreated, value changed             |                       | ~0.3–0.4 ms each         |                         | ~1 ms total              |                         |
-|                              | `SearchInput`           | Stable props, no significant change           |                       | ~0.3 ms                  |                         | ~0.3 ms                  |                         |
-| Select ASC Sorting           | `CountryList`           | Sorted list recalculated, triggered rerender  |                       | ~39.2 ms                 |                         | ~39.2 ms                 |                         |
-|                              | `CountryListItem` (250) | New onClick reference, rerender all           |                       | ~0.3–0.4 ms per item     |                         | ~84 ms total             |                         |
-|                              | `CountryFilteringPanel` | New sortConfig reference                      |                       | ~1.1 ms                  |                         | ~1.1 ms                  |                         |
-|                              | `Select` (3)            | Value and onChange updated                    |                       | ~0.3–0.4 ms each         |                         | ~1 ms total              |                         |
-|                              | `SearchInput`           | Unchanged                                     |                       | ~0.3 ms                  |                         | ~0.3 ms                  |                         |
+| Interaction                  | Component               | Render Reason (Before)                        | Render Reason (After)             | Render Duration (Before) | Render Duration (After) | Commit Duration (Before) | Commit Duration (After) |
+| ---------------------------- | ----------------------- | --------------------------------------------- | --------------------------------- | ------------------------ | ----------------------- | ------------------------ | ----------------------- |
+| Click on Sort By Name Select | `CountryList`           | Rerender from sorting triggered by sortConfig | Memoized sort result              | \~33.5 ms                | \~0.9 ms                | \~33.5 ms                | \~1.6 ms                |
+|                              | `CountryListItem` (250) | Re-created `onClick` callback per item        | Skipped due to `React.memo`       | \~0.3–0.4 ms per item    | \~0 ms                  | \~86 ms total            | \~0 ms                  |
+|                              | `CountryFilteringPanel` | Updated due to new sort handler               | Memoized and stable props         | \~1.2 ms                 | \~0 ms                  | \~1.2 ms                 | \~0 ms                  |
+|                              | `Select` (3)            | onChange recreated, value changed             | Skipped – props unchanged         | \~0.3–0.4 ms each        | \~0 ms                  | \~1 ms total             | \~0 ms                  |
+| Select ASC Sorting           | `CountryList`           | Sorted list recalculated, triggered rerender  | Already memoized sort result      | \~39.2 ms                | \~0.9 ms                | \~39.2 ms                | \~1.6 ms                |
+|                              | `CountryListItem` (250) | New onClick reference, rerender all           | Skipped due to memoized `onClick` | \~0.3–0.4 ms per item    | \~0 ms                  | \~84 ms total            | \~0 ms                  |
+|                              | `CountryFilteringPanel` | New sortConfig reference                      | Memoized and stable props         | \~1.1 ms                 | \~0 ms                  | \~1.1 ms                 | \~0 ms                  |
+|                              | `Select` (3)            | Value and onChange updated                    | Skipped – props unchanged         | \~0.3–0.4 ms each        | \~0 ms                  | \~1 ms total             | \~0 ms                  |
 
 ---
 
 ### 🖼️ Visual Chart Comparison - Sort by Name
 
-| View                        | Before Optimization                    | After Optimization            |
-| --------------------------- | -------------------------------------- | ----------------------------- |
-| 🔥 Flame Graph – Click      | ![alt text](./src/assets/fg-1-sbn.png) | _No re-renders observed_      |
-| 🔥 Flame Graph – Selection  | ![alt text](./src/assets/fg-2-sbn.png) | _(Insert after optimization)_ |
-| 📈 Ranked Chart – Click     | ![alt text](./src/assets/rc-1-sbn.png) | _No re-renders observed_      |
-| 📈 Ranked Chart – Selection | ![alt text](./src/assets/rc-2-sbn.png) | _(Insert after optimization)_ |
-| 🕒 Timeline                 | ![alt text](/src/assets/tl-sbn.png)    | _No re-renders observed_      |
+| View                                           | Before Optimization                    | After Optimization                     |
+| ---------------------------------------------- | -------------------------------------- | -------------------------------------- |
+| 🔥 Flame Graph – Click on Sort By Name Select  | ![alt text](./src/assets/fg-1-sbn.png) | _No re-renders observed_               |
+| 🔥 Flame Graph – Select Asc Sorting            | ![alt text](./src/assets/fg-2-sbn.png) | ![alt text](./src/assets/fg-o-sbn.png) |
+| 📈 Ranked Chart – Click on Sort By Name Select | ![alt text](./src/assets/rc-1-sbn.png) | _No re-renders observed_               |
+| 📈 Ranked Chart – Select Asc Sorting           | ![alt text](./src/assets/rc-2-sbn.png) | ![alt text](./src/assets/rc-o-sbn.png) |
+| 🕒 Timeline                                    | ![alt text](/src/assets/tl-sbn.png)    | ![alt text](/src/assets/tl-o-sbn.png)  |
 
 ---
 
@@ -122,13 +120,13 @@ The detailed performance metrics are shown below.
 
 ### 🖼️ Visual Chart Comparison - Search Country
 
-| View                     | Before Optimization                   | After Optimization            |
-| ------------------------ | ------------------------------------- | ----------------------------- |
-| 🔥 Flame Graph – Click   | ![alt text](./src/assets/fg-c-cs.png) | _No re-renders observed_      |
-| 🔥 Flame Graph – Typing  | ![alt text](./src/assets/fg-s-cs.png) | _(Insert after optimization)_ |
-| 📈 Ranked Chart – Click  | ![alt text](./src/assets/rc-c-cs.png) | _No re-renders observed_      |
-| 📈 Ranked Chart – Typing | ![alt text](./src/assets/rc-s-cs.png) | _(Insert after optimization)_ |
-| 🕒 Timeline              | ![alt text](./src/assets/tl-cs.png)   | _No re-renders observed_      |
+| View                                    | Before Optimization                   | After Optimization            |
+| --------------------------------------- | ------------------------------------- | ----------------------------- |
+| 🔥 Flame Graph – Click on Search Input  | ![alt text](./src/assets/fg-c-cs.png) | _No re-renders observed_      |
+| 🔥 Flame Graph – Typing                 | ![alt text](./src/assets/fg-s-cs.png) | _(Insert after optimization)_ |
+| 📈 Ranked Chart – Click on Search Input | ![alt text](./src/assets/rc-c-cs.png) | _No re-renders observed_      |
+| 📈 Ranked Chart – Typing                | ![alt text](./src/assets/rc-s-cs.png) | _(Insert after optimization)_ |
+| 🕒 Timeline                             | ![alt text](./src/assets/tl-cs.png)   | _No re-renders observed_      |
 
 ---
 
