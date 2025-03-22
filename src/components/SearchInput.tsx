@@ -1,9 +1,14 @@
+import { memo } from 'react';
+
 interface SearchInputProps {
   value: string;
   onChange: (searchTerm: string) => void;
 }
 
-const SearchInput = ({ value, onChange }: SearchInputProps) => {
+const SearchInput = memo(function SearchInput({
+  value,
+  onChange,
+}: SearchInputProps) {
   return (
     <input
       value={value}
@@ -12,6 +17,6 @@ const SearchInput = ({ value, onChange }: SearchInputProps) => {
       className="w-full p-4 ps-8"
     />
   );
-};
+});
 
 export default SearchInput;

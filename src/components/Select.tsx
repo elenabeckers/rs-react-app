@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface SelectProps {
   placeholder?: string;
   label?: string;
@@ -6,13 +8,13 @@ interface SelectProps {
   onChange: (searchTerm: string) => void;
 }
 
-const Select = ({
+const Select = memo(function Select({
   placeholder,
   label,
   value,
   options,
   onChange,
-}: SelectProps) => {
+}: SelectProps) {
   return (
     <div className="space-x-2">
       <label className="text-sm font-medium text-gray-700">{label}</label>
@@ -26,6 +28,6 @@ const Select = ({
       </select>
     </div>
   );
-};
+});
 
 export default Select;

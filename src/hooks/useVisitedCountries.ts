@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getVisitedCountries, storeVisitedCountries } from '../api';
 
 const useVisitedCountries = () => {
@@ -16,17 +16,20 @@ const useVisitedCountries = () => {
     }
   }, [visitedCountries]);
 
-  const visitCountry = (countryName: string) => {
-    setVisitedCountries((prev) => {
-      if (prev?.has(countryName)) {
-        return prev;
-      } else {
-        const newVisited = new Set(prev);
-        newVisited.add(countryName);
-        return newVisited;
-      }
-    });
-  };
+  const visitCountry = useCallback(
+    (countryName: string) => {
+      setVisitedCountries((prev) => {
+        if (prev?.has(countryName)) {
+          return prev;
+        } else {
+          const newVisited = new Set(prev);
+          newVisited.add(countryName);
+          return newVisited;
+        }
+      });
+    },
+    [setVisitedCountries]
+  );
 
   return {
     visitedCountries,

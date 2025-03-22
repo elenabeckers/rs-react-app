@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Country } from '../types';
 
 const useLoadingCountries = () => {
   const [countries, setCountries] = useState<Country[]>([]);
-  const [regions, setRegions] = useState<string[]>([]);
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -13,17 +11,19 @@ const useLoadingCountries = () => {
       const response = await fetch('https://restcountries.com/v3.1/all');
       const list: Country[] = await response.json();
       setCountries(list);
-
-      const uniqueRegions = Array.from(
-        new Set(list.map((country) => country.region))
-      ).filter(Boolean);
-
-      setRegions(uniqueRegions);
       setIsLoading(false);
     };
 
     fetchCountries();
   }, []);
+
+  const regions = useMemo(() => {
+    if (!countries) return [];
+
+    return Array.from(
+      new Set(countries.map((country) => country.region))
+    ).filter(Boolean);
+  }, [countries]);
 
   return {
     countries,

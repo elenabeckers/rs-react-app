@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Country } from '../types';
 
 interface CountryListItemProps {
@@ -6,11 +7,11 @@ interface CountryListItemProps {
   onClick: (country: string) => void;
 }
 
-const CountryListItem = ({
+const CountryListItem = memo(function CountryListItem({
   country,
   isVisited,
   onClick,
-}: CountryListItemProps) => {
+}: CountryListItemProps) {
   const {
     name: { common },
     population,
@@ -39,6 +40,6 @@ const CountryListItem = ({
       </div>
     </li>
   );
-};
+});
 
 export default CountryListItem;

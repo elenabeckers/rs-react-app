@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { Country } from './types';
+import { useState, useMemo, useCallback } from 'react';
 import CountryList from './components/CountryList';
 import SearchInput from './components/SearchInput';
 import {
@@ -20,10 +19,9 @@ function App() {
   const [selectedRegion, setSelectedRegion] = useState<string>('');
 
   const { sortConfig, updateSort } = useSortConfig();
-  const [filteredCountries, setFilteredCountries] = useState<Country[]>([]);
 
-  useEffect(() => {
-    if (!countries.length) return;
+  const filteredCountries = useMemo(() => {
+    if (!countries.length) return [];
 
     let filtered = countries;
 
@@ -47,7 +45,7 @@ function App() {
         break;
     }
 
-    setFilteredCountries(filtered);
+    return filtered;
   }, [
     searchTerm,
     selectedRegion,
@@ -55,6 +53,11 @@ function App() {
     sortConfig.order,
     countries,
   ]);
+
+  const onSelectRegion = useCallback(
+    (region: string) => setSelectedRegion(region),
+    [setSelectedRegion]
+  );
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 flex flex-col items-center">
@@ -65,14 +68,14 @@ function App() {
       <div className="flex space-x-4">
         <CountryFilteringPanel
           region={selectedRegion}
-          onRegionChange={setSelectedRegion}
+          onRegionChange={onSelectRegion}
           regionList={regions}
           sortConfig={sortConfig}
           onSort={updateSort}
         />
       </div>
       <p className="mt-4 text-gray-600">
-        {filteredCountries.length} countries was founded
+        {filteredCountries.length} countries were founded
       </p>
       <CountryList countries={filteredCountries} isLoading={isLoading} />
     </div>

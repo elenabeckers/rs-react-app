@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { SortOrder, SortType } from '../const';
 
 export interface SortConfigInterface {
@@ -12,13 +12,16 @@ const useSortConfig = () => {
     order: '',
   });
 
-  const updateSort = (type: SortType | '', order: SortOrder | '') => {
-    if (!order) {
-      setSortConfig({ type: '', order });
-    } else {
-      setSortConfig({ type, order });
-    }
-  };
+  const updateSort = useCallback(
+    (type: SortType | '', order: SortOrder | '') => {
+      if (!order) {
+        setSortConfig({ type: '', order });
+      } else {
+        setSortConfig({ type, order });
+      }
+    },
+    [setSortConfig]
+  );
 
   return {
     sortConfig,

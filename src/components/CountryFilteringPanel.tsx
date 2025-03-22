@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react';
 import { SortingOptions, SortOrder, SortType } from '../const';
 import { SortConfigInterface } from '../hooks/useSortConfig';
 import Select from './Select';
@@ -10,13 +11,23 @@ interface CountryFilteringPanelProps {
   onSort: (type: SortType | '', order: SortOrder | '') => void;
 }
 
-const CountryFilteringPanel = ({
+const CountryFilteringPanel = memo(function CountryFilteringPanel({
   region,
   regionList,
   onRegionChange,
   sortConfig,
   onSort,
-}: CountryFilteringPanelProps) => {
+}: CountryFilteringPanelProps) {
+  const handleSortByName = useCallback(
+    (value: string) => onSort(SortType.Name, value as SortOrder),
+    [onSort]
+  );
+
+  const handleSortByPopulation = useCallback(
+    (value: string) => onSort(SortType.Population, value as SortOrder),
+    [onSort]
+  );
+
   return (
     <>
       <Select
@@ -30,7 +41,7 @@ const CountryFilteringPanel = ({
         label="Sort By Name:"
         placeholder="No Sorting"
         value={sortConfig.type === SortType.Name ? sortConfig.order : ''}
-        onChange={(value) => onSort(SortType.Name, value as SortOrder)}
+        onChange={handleSortByName}
         options={SortingOptions}
       />
 
@@ -38,11 +49,11 @@ const CountryFilteringPanel = ({
         label="Sort By Population:"
         placeholder="No Sorting"
         value={sortConfig.type === SortType.Population ? sortConfig.order : ''}
-        onChange={(value) => onSort(SortType.Population, value as SortOrder)}
+        onChange={handleSortByPopulation}
         options={SortingOptions}
       />
     </>
   );
-};
+});
 
 export default CountryFilteringPanel;

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import useVisitedCountries from '../hooks/useVisitedCountries';
 import { Country } from '../types';
 import CountryListItem from './CountryListItem';
@@ -8,7 +9,10 @@ interface CountryListProps {
   isLoading: boolean;
 }
 
-const CountryList = ({ countries, isLoading }: CountryListProps) => {
+const CountryList = memo(function CountryList({
+  countries,
+  isLoading,
+}: CountryListProps) {
   const { visitedCountries, visitCountry } = useVisitedCountries();
 
   if (isLoading) return <Loader />;
@@ -28,6 +32,6 @@ const CountryList = ({ countries, isLoading }: CountryListProps) => {
       })}
     </ul>
   );
-};
+});
 
 export default CountryList;
