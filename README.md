@@ -124,10 +124,41 @@ The detailed performance metrics are shown below.
 
 ### 🖼️ Visual Chart Comparison - Search Country
 
-| View                        | Before Optimization                   | After Optimization            |
-| --------------------------- | ------------------------------------- | ----------------------------- |
-| 🔥 Flame Graph – Click      | ![alt text](./src/assets/fg-c-cs.png) | _No re-renders observed_      |
-| 🔥 Flame Graph – Selection  | ![alt text](./src/assets/fg-s-cs.png) | _(Insert after optimization)_ |
-| 📈 Ranked Chart – Click     | ![alt text](./src/assets/rc-c-cs.png) | _No re-renders observed_      |
-| 📈 Ranked Chart – Selection | ![alt text](./src/assets/rc-s-cs.png) | _(Insert after optimization)_ |
-| 🕒 Timeline                 | ![alt text](./src/assets/tl-cs.png)   | _No re-renders observed_      |
+| View                     | Before Optimization                   | After Optimization            |
+| ------------------------ | ------------------------------------- | ----------------------------- |
+| 🔥 Flame Graph – Click   | ![alt text](./src/assets/fg-c-cs.png) | _No re-renders observed_      |
+| 🔥 Flame Graph – Typing  | ![alt text](./src/assets/fg-s-cs.png) | _(Insert after optimization)_ |
+| 📈 Ranked Chart – Click  | ![alt text](./src/assets/rc-c-cs.png) | _No re-renders observed_      |
+| 📈 Ranked Chart – Typing | ![alt text](./src/assets/rc-s-cs.png) | _(Insert after optimization)_ |
+| 🕒 Timeline              | ![alt text](./src/assets/tl-cs.png)   | _No re-renders observed_      |
+
+---
+
+### 📊 Profiling Results of Click on Country Card
+
+#### 🧪 Actions Performed
+
+- Clicked on a country card to mark it as visited
+
+#### ✅ Summary of Observations
+
+- Clicking a country card triggered re-renders in `CountryList` and multiple `Country List Item` components
+- The main causes were a non-memoized `visitCountry` function
+- Total commit duration was \~34.3 ms, primarily from country cards
+
+The detailed performance metrics are shown below.
+
+| Interaction        | Component                 | Render Reason (Before)                  | Render Reason (After) | Render Duration (Before) | Render Duration (After) | Commit Duration (Before) | Commit Duration (After) |
+| ------------------ | ------------------------- | --------------------------------------- | --------------------- | ------------------------ | ----------------------- | ------------------------ | ----------------------- |
+| Click Country Card | `CountryList`             | Updated due to `visitedCountries` state |                       | \~6.8 ms                 |                         | \~6.8 ms                 |                         |
+|                    | `Country List Item` (250) | Re-created `onClick` callback per item  |                       | \~0.2–0.3 ms per item    |                         | \~27.5 ms total          |                         |
+
+---
+
+### 🖼️ Visual Chart Comparison - Click Country Card
+
+| View                    | Before Optimization                | After Optimization       |
+| ----------------------- | ---------------------------------- | ------------------------ |
+| 🔥 Flame Graph – Click  | ![alt text](./src/assets/fg-v.png) | _No re-renders observed_ |
+| 📈 Ranked Chart – Click | ![alt text](./src/assets/rc-v.png) | _No re-renders observed_ |
+| 🕒 Timeline – Click     | ![alt text](./src/assets/tl-v.png) | _No re-renders observed_ |
