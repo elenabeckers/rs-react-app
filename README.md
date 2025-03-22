@@ -13,25 +13,25 @@ The application loads and displays a list of countries, allowing users to filter
 
 #### ✅ Summary of Observations
 
-- All components in the filtering panel (`Select`, `CountryFilteringPanel`, `SearchInput`) re-rendered during both interactions
-- `CountryList` and its 250 `CountryListItem` children were re-rendered on both dropdown interaction and region selection
-- Re-renders were primarily caused by unstable props (`onChange`, `onClick`) and object references
-- Overall commit duration exceeded **150 ms**, mostly due to redundant re-renders of country list items
+- Before optimization, all filtering-related components (`Select`, `CountryFilteringPanel`, `SearchInput`) re-rendered unnecessarily. After optimization, they remained stable thanks to memoization and stable props.
+- `CountryList` initially re-rendered fully on both dropdown open and region selection, taking over 70 ms. After optimization, it re-rendered only once with memoized filtered data, reducing render time to ~1.5 ms.
+- `CountryListItem` components used to re-render all 250 items due to recreated callbacks and prop changes, costing ~80 ms total. After applying `React.memo` and stabilizing `onClick`, they no longer re-rendered.
+- Overall commit duration dropped from over **150 ms** to just **~3.4 ms**, significantly improving responsiveness.
 
 The detailed performance metrics are shown below.
 
-| Interaction    | Component               | Render Reason (Before)                                    | Render Reason (After) | Render Duration (Before) | Render Duration (After) | Commit Duration (Before) | Commit Duration (After) |
-| -------------- | ----------------------- | --------------------------------------------------------- | --------------------- | ------------------------ | ----------------------- | ------------------------ | ----------------------- |
-| Click dropdown | `CountryList`           | Updated `sortConfig`, `selectedRegion`, rerendered parent |                       | \~32.8 ms                |                         | \~32.8 ms                |                         |
-|                | `CountryListItem` (250) | Re-created `visitCountry` callback                        |                       | \~0.3–0.4 ms per item    |                         | \~80 ms total            |                         |
-|                | `CountryFilteringPanel` | Updated `sortConfig` object and `onRegionChange` callback |                       | \~1 ms                   |                         | \~1 ms                   |                         |
-|                | `Select` (3)            | New `onChange` handlers and changing `value` props        |                       | \~0.2–0.4 ms each        |                         | \~1 ms total             |                         |
-|                | `SearchInput`           | New `onChange` from parent                                |                       | \~0.4 ms                 |                         | \~0.4 ms                 |                         |
-| Select region  | `CountryList`           | Filtered countries list changed (`useMemo`)               |                       | \~39.8 ms                |                         | \~39.8 ms                |                         |
-|                | `CountryListItem` (250) | Newly created `onClick`                                   |                       | \~0.3–0.4 ms per item    |                         | \~80 ms total            |                         |
-|                | `CountryFilteringPanel` | Prop changes from parent                                  |                       | \~1 ms                   |                         | \~1 ms                   |                         |
-|                | `Select` (3)            | Change in `value` and non-memoized `onChange`             |                       | \~0.2–0.4 ms each        |                         | \~1 ms total             |                         |
-|                | `SearchInput`           | New `onChange` from parent                                |                       | \~0.4 ms                 |                         | \~0.4 ms                 |                         |
+| Interaction    | Component               | Render Reason (Before)                                    | Render Reason (After)                      | Render Duration (Before) | Render Duration (After) | Commit Duration (Before) | Commit Duration (After) |
+| -------------- | ----------------------- | --------------------------------------------------------- | ------------------------------------------ | ------------------------ | ----------------------- | ------------------------ | ----------------------- |
+| Click dropdown | `CountryList`           | Updated `sortConfig`, `selectedRegion`, rerendered parent | Memoized and only changed `countries`      | \~32.8 ms                | \~1.5 ms                | \~32.8 ms                | \~3.4 ms                |
+|                | `CountryListItem` (250) | Re-created `visitCountry` callback                        | Skipped due to `React.memo` + stable props | \~0.3–0.4 ms per item    | \~0 ms                  | \~80 ms total            | \~0 ms                  |
+|                | `CountryFilteringPanel` | Updated `sortConfig` object and `onRegionChange` callback | Memoized, no change                        | \~1 ms                   | \~0 ms                  | \~1 ms                   | \~0 ms                  |
+|                | `Select` (3)            | New `onChange` handlers and changing `value` props        | Skipped – props unchanged                  | \~0.2–0.4 ms each        | \~0 ms                  | \~1 ms total             | \~0 ms                  |
+|                | `SearchInput`           | New `onChange` from parent                                | Skipped – props unchanged                  | \~0.4 ms                 | \~0 ms                  | \~0.4 ms                 | \~0 ms                  |
+| Select region  | `CountryList`           | Filtered countries list changed (`useMemo`)               | Same memoized result                       | \~39.8 ms                | \~1.5 ms                | \~39.8 ms                | \~3.4 ms                |
+|                | `CountryListItem` (250) | Newly created `onClick`                                   | Skipped due to stable memoized props       | \~0.3–0.4 ms per item    | \~0 ms                  | \~80 ms total            | \~0 ms                  |
+|                | `CountryFilteringPanel` | Prop changes from parent                                  | No re-render                               | \~1 ms                   | \~0 ms                  | \~1 ms                   | \~0 ms                  |
+|                | `Select` (3)            | Change in `value` and non-memoized `onChange`             | Memoized, props unchanged                  | \~0.2–0.4 ms each        | \~0 ms                  | \~1 ms total             | \~0 ms                  |
+|                | `SearchInput`           | New `onChange` from parent                                | No re-render                               | \~0.4 ms                 | \~0 ms                  | \~0.4 ms                 | \~0 ms                  |
 
 ---
 
