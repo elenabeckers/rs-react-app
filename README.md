@@ -37,7 +37,7 @@ The application loads and displays a list of countries, allowing users to filter
 
 ---
 
-## ✅ Details of Optimization
+## ✅ Details of Profiling
 
 ### 📊 Profiling Results of Filter By Region
 
