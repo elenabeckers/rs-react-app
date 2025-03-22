@@ -87,3 +87,47 @@ The detailed performance metrics are shown below.
 | 📈 Ranked Chart – Click     | ![alt text](./src/assets/rc-1-sbn.png) | _No re-renders observed_      |
 | 📈 Ranked Chart – Selection | ![alt text](./src/assets/rc-2-sbn.png) | _(Insert after optimization)_ |
 | 🕒 Timeline                 | ![alt text](/src/assets/tl-sbn.png)    | _No re-renders observed_      |
+
+---
+
+### 📊 Profiling Results of Search Country
+
+#### 🧪 Actions Performed
+
+- Clicked on the "Search" Input
+- Typed "i" in it
+
+#### ✅ Summary of Observations
+
+- Clicking on the search input triggered re-renders in `SearchInput`, `Select`, and `CountryFilteringPanel`
+- Typing caused the `CountryList` to apply filters, leading to full re-renders
+- 250 `CountryListItem` components were re-rendered due to re-created `onClick` handlers
+- `SearchInput` re-rendered with a new `onChange` prop, though the reference stayed mostly stable
+- Commit duration reached ~27.2 ms; most of the render time came from list items
+
+The detailed performance metrics are shown below.
+
+| Interaction           | Component               | Render Reason (Before)                        | Render Reason (After) | Render Duration (Before) | Render Duration (After) | Commit Duration (Before) | Commit Duration (After) |
+| --------------------- | ----------------------- | --------------------------------------------- | --------------------- | ------------------------ | ----------------------- | ------------------------ | ----------------------- |
+| Click on Search Input | `CountryList`           | Re-renders due to filtering and search config |                       | ~27.2 ms                 |                         | ~27.2 ms                 |                         |
+|                       | `CountryListItem` (250) | Non-memoized `onClick` recreated per render   |                       | ~0.2–0.3 ms per item     |                         | ~65 ms total             |                         |
+|                       | `CountryFilteringPanel` | Prop `onSort` updated                         |                       | ~0.6 ms                  |                         | ~0.6 ms                  |                         |
+|                       | `Select` (3)            | Updated `onChange` and `value` props          |                       | ~0.1–0.2 ms each         |                         | ~0.6 ms total            |                         |
+|                       | `SearchInput`           | New `onChange` handler from parent            |                       | ~0.6 ms                  |                         | ~0.6 ms                  |                         |
+| Type in Search Input  | `CountryList`           | Search filter applied, `useMemo` recalculated |                       | ~27.2 ms                 |                         | ~27.2 ms                 |                         |
+|                       | `CountryListItem` (250) | Recreated `onClick`                           |                       | ~0.2–0.3 ms per item     |                         | ~65 ms total             |                         |
+|                       | `CountryFilteringPanel` | Parent props updated                          |                       | ~0.6 ms                  |                         | ~0.6 ms                  |                         |
+|                       | `Select` (3)            | `value` and `onChange` updated                |                       | ~0.1–0.2 ms each         |                         | ~0.6 ms total            |                         |
+|                       | `SearchInput`           | `onChange` reference stable                   |                       | ~0.6 ms                  |                         | ~0.6 ms                  |                         |
+
+---
+
+### 🖼️ Visual Chart Comparison - Search Country
+
+| View                        | Before Optimization                   | After Optimization            |
+| --------------------------- | ------------------------------------- | ----------------------------- |
+| 🔥 Flame Graph – Click      | ![alt text](./src/assets/fg-c-cs.png) | _No re-renders observed_      |
+| 🔥 Flame Graph – Selection  | ![alt text](./src/assets/fg-s-cs.png) | _(Insert after optimization)_ |
+| 📈 Ranked Chart – Click     | ![alt text](./src/assets/rc-c-cs.png) | _No re-renders observed_      |
+| 📈 Ranked Chart – Selection | ![alt text](./src/assets/rc-s-cs.png) | _(Insert after optimization)_ |
+| 🕒 Timeline                 | ![alt text](./src/assets/tl-cs.png)   | _No re-renders observed_      |
